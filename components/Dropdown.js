@@ -1,0 +1,25 @@
+"use client";
+
+import useWhenClickedOutside from "@/hooks/useWhenClickedOutside";
+import { useState } from "react";
+
+export default function Dropdown({ children, buttonContent, marginTop }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const ref = useWhenClickedOutside(() => setIsOpen(false));
+  return (
+    <div className="relative z-40" ref={ref}>
+      <button type="button" onClick={() => setIsOpen((prev) => !prev)}>
+        {buttonContent}
+      </button>
+      <div
+        className={`absolute top-full right-0 ${
+          marginTop ? marginTop : "mt-5"
+        } rounded-lg bg-white shadow-md dark:bg-arc_black ${
+          isOpen ? "block" : "hidden"
+        }`}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}

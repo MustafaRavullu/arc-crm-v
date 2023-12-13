@@ -1,7 +1,9 @@
-import { Inter } from "next/font/google";
+import { Manrope } from "next/font/google";
 import "./globals.css";
+import Providers from "@/components/Providers";
+import ThemeButton from "@/components/ThemeButton";
 
-const inter = Inter({ subsets: ["latin"] });
+const manrope = Manrope({ subsets: ["latin"] });
 
 export const metadata = {
   title: "ARC CRM",
@@ -10,8 +12,10 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`text-sm ${manrope.className}`}>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }
