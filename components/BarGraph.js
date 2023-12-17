@@ -27,9 +27,11 @@ export default function BarGraph({
       ? data.find((item) => item.year === selectedYear)
       : type.toLocaleLowerCase("tr") === "fiber"
       ? data.find((item) => item.year === selectedYear)
+      : type.toLocaleLowerCase("tr") === "targetamount"
+      ? data
       : {};
   return (
-    <div className="flex flex-col gap-6 p-6 shadow-md">
+    <div className="flex h-full flex-col gap-6 p-6 shadow-md">
       <div className="flex justify-between">
         <div className="font-semibold">{title}</div>
         {isYearSelectOn && (
@@ -50,7 +52,15 @@ export default function BarGraph({
         )}
       </div>
       <ResponsiveContainer width={"100%"} height={"100%"}>
-        <BarChart height={400} width={500} data={selectedYearData.data}>
+        <BarChart
+          height={400}
+          width={500}
+          data={
+            type.toLocaleLowerCase("tr") === "targetamount"
+              ? selectedYearData
+              : selectedYearData.data
+          }
+        >
           <Tooltip content={<CustomTooltip />} />
           <YAxis />
           <XAxis dataKey={nameKey} />
@@ -67,7 +77,6 @@ const CustomTooltip = ({ active, payload, label }) => {
       <div className="p-4 bg-white shadow flex flex-col gap-1 rounded-md dark:bg-arc_black">
         <p className="text-medium text-lg">{label}</p>
         <p className="text-sm">
-          Satış:
           <span className="ml-2 text-yellow-600">{payload[0].value}</span>
         </p>
       </div>

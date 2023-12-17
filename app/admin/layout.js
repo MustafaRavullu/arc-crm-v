@@ -1,9 +1,9 @@
 import HamburgerMenu from "@/components/HamburgerMenu";
 import Header from "@/components/Header";
 import HeaderLinks from "@/components/HeaderLinks";
-import Navbar from "@/components/Navbar";
+import WorkTrackingContextProvider from "@/contexts/workTrackingContext";
 
-export default function AdminLayout({ children }) {
+export default async function AdminLayout({ children }) {
   const navLinks = [
     {
       id: 1,
@@ -13,7 +13,7 @@ export default function AdminLayout({ children }) {
     {
       id: 2,
       label: "İŞ TAKİP",
-      href: "/admin/work-tracking",
+      href: "/admin/work-tracking/active-work-orders",
     },
   ];
   return (
@@ -26,7 +26,7 @@ export default function AdminLayout({ children }) {
           <HamburgerMenu links={navLinks} />
         </div>
       </Header>
-      {children}
+      <WorkTrackingContextProvider>{children}</WorkTrackingContextProvider>
     </div>
   );
 }
