@@ -76,7 +76,7 @@ export default function CreateLayout({ children }) {
     },
   ];
   return (
-    <div className="flex-1 flex  gap-6">
+    <div className="flex-1 flex flex-col md:flex-row  gap-6">
       <div className="flex-1">
         <AsideBar links={asideBarCreateLinks} />
       </div>

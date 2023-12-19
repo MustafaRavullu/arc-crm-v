@@ -31,7 +31,7 @@ export default function BarGraph({
       ? data
       : {};
   return (
-    <div className="flex h-full flex-col gap-6 p-6 shadow-md">
+    <div className="flex h-full flex-col gap-6 p-6 shadow-md rounded-lg">
       <div className="flex justify-between">
         <div className="font-semibold">{title}</div>
         {isYearSelectOn && (

@@ -1,5 +1,10 @@
-import React from "react";
+"use client";
+import { redirect } from "next/navigation";
+import { useLayoutEffect } from "react";
 
 export default function Delete() {
-  return <div>Delete</div>;
+  useLayoutEffect(() => {
+    redirect("/admin/work-tracking/delete/work-order");
+  }, []);
+  return <div></div>;
 }

@@ -33,7 +33,7 @@ export default function StoryCard({
         </div>
         <div className="flex gap-1">
           <div>
-            {operationType.toLocaleLowerCase("tr") === "teslimal"
+            {operationType.toLocaleLowerCase("tr") === "teslim al"
               ? "Teslim Alınan"
               : "Teslim Edilen"}
           </div>

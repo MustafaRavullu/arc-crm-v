@@ -11,30 +11,30 @@ export default function WorkTrackingContextProvider({ children }) {
       id: 1,
       workOrderCode: "1234-1", //1
       productType: "ürün",
-      customer: "Yok",
-      image: {}, // 1
+      customer: "",
+      image: "/57018638_85_B.avif", // 1
       startedAt: "11.12.2023", // new Date().toLocaleDateString("tr-TR")
-      finishedAt: "Devam ediyor",
+      finishedAt: "",
       active: true,
       jobType: "normal", //1
       fiber: ["pamuk", "tiftik"],
-      description: "ürünün makine numarası değişebilir",
-      grammage: "300",
-      bedenBoy: "45",
-      bedenEn: "23",
-      kolBoyu: "23",
-      kolPazu: "21",
-      kolEni: "233",
-      onYakaDusuklugu: "21",
-      arkaYakaDusuklugu: "65",
-      omuzDusuklugu: "25",
-      ense: "23",
-      bedenOnBandGenisligi: "53",
-      bedenOnBandUzunlugu: "52",
-      bedenLastikBoyu: "16",
-      yakaYuksekligi: "41",
-      yakaEni: "35",
-      makinaNo: "231",
+      description: "",
+      grammage: "",
+      bedenBoy: "",
+      bedenEn: "",
+      kolBoyu: "",
+      kolPazu: "",
+      kolEni: "",
+      onYakaDusuklugu: "",
+      arkaYakaDusuklugu: "",
+      omuzDusuklugu: "",
+      ense: "",
+      bedenOnBandGenisligi: "",
+      bedenOnBandUzunlugu: "",
+      bedenLastikBoyu: "",
+      yakaYuksekligi: "",
+      yakaEni: "",
+      makinaNo: "",
       targetAmount: [
         {
           id: 1,
@@ -60,7 +60,7 @@ export default function WorkTrackingContextProvider({ children }) {
       stories: [
         {
           id: 1,
-          operationType: "teslimEt",
+          operationType: "Teslim Al",
           subcontractorFollower: "Mehmet",
           operationNumber: "1",
           operationTime: "12.12.2023 16:03:10",
@@ -79,12 +79,12 @@ export default function WorkTrackingContextProvider({ children }) {
               unit: "kg",
             },
           ],
-          transactionPointType: "ipdeposu",
+          transactionPointType: "İp Deposu",
           transactionPoint: "İp deposu",
         },
         {
           id: 2,
-          operationType: "teslimAl",
+          operationType: "Teslim Al",
           subcontractorFollower: "Mehmet",
           operationNumber: "2",
           operationTime: "12.12.2023 16:30:45",
@@ -101,12 +101,12 @@ export default function WorkTrackingContextProvider({ children }) {
               amount: "4000",
             },
           ],
-          transactionPointType: "ipdeposu",
+          transactionPointType: "İp Deposu",
           transactionPoint: "İp deposu",
         },
         {
           id: 3,
-          operationType: "teslimAl",
+          operationType: "Teslim Al",
           subcontractorFollower: "Mehmet",
           operationNumber: "3",
           operationTime: "12.12.2023 16:30:45",
@@ -123,12 +123,12 @@ export default function WorkTrackingContextProvider({ children }) {
               amount: "4000",
             },
           ],
-          transactionPointType: "ipdeposu",
+          transactionPointType: "İp Deposu",
           transactionPoint: "İp deposu",
         },
         {
           id: 4,
-          operationType: "teslimAl",
+          operationType: "Teslim Al",
           subcontractorFollower: "Mehmet",
           operationNumber: "4",
           operationTime: "12.12.2023 16:30:45",
@@ -145,7 +145,7 @@ export default function WorkTrackingContextProvider({ children }) {
               amount: "4000",
             },
           ],
-          transactionPointType: "yıkama",
+          transactionPointType: "Yıkama",
           transactionPoint: "aydın temizlik",
         },
       ],
@@ -154,14 +154,14 @@ export default function WorkTrackingContextProvider({ children }) {
       id: 2,
       workOrderCode: "5468-1", //1
       productType: "ürün",
-      image: {}, // 1
+      image: "/57038640_92_B.avif", // 1
       startedAt: "11.12.2023", // new Date().toLocaleDateString("tr-TR")
-      finishedAt: "Devam ediyor",
+      finishedAt: "",
       active: false,
       jobType: "normal", //1
       fiber: ["akrilik", "pamuk"],
       description: "açıklama",
-      customer: "Yok",
+      customer: "",
       grammage: "800",
       bedenBoy: "90",
       bedenEn: "23",
@@ -203,7 +203,7 @@ export default function WorkTrackingContextProvider({ children }) {
       stories: [
         {
           id: 1,
-          operationType: "teslimAl",
+          operationType: "Teslim Al",
           subcontractorFollower: "veli",
           operationNumber: "1",
           operationTime: "12.12.2023 16:03:10",
@@ -222,12 +222,12 @@ export default function WorkTrackingContextProvider({ children }) {
               unit: "kg",
             },
           ],
-          transactionPointType: "yıkama",
+          transactionPointType: "Yıkama",
           transactionPoint: "eflatun temizlik",
         },
         {
           id: 2,
-          operationType: "teslimEt",
+          operationType: "Teslim Et",
           subcontractorFollower: "ahmet",
           operationNumber: "2",
           operationTime: "12.12.2023 16:30:45",
@@ -244,12 +244,12 @@ export default function WorkTrackingContextProvider({ children }) {
               amount: "4000",
             },
           ],
-          transactionPointType: "ipDeposu",
+          transactionPointType: "İp Deposu",
           transactionPoint: "İp deposu",
         },
         {
           id: 3,
-          operationType: "teslimAl",
+          operationType: "Teslim Al",
           subcontractorFollower: "Mehmet",
           operationNumber: "3",
           operationTime: "12.12.2023 16:30:45",
@@ -266,12 +266,12 @@ export default function WorkTrackingContextProvider({ children }) {
               amount: "4000",
             },
           ],
-          transactionPointType: "aksesuar",
+          transactionPointType: "Aksesuar",
           transactionPoint: "aksesuarcı semih",
         },
         {
           id: 4,
-          operationType: "teslimAl",
+          operationType: "Teslim Al",
           subcontractorFollower: "Mehmet",
           operationNumber: "4",
           operationTime: "12.12.2023 16:30:45",
@@ -288,7 +288,7 @@ export default function WorkTrackingContextProvider({ children }) {
               amount: "4000",
             },
           ],
-          transactionPointType: "ütü",
+          transactionPointType: "Ütü",
           transactionPoint: "aydın ütü",
         },
       ],
@@ -297,10 +297,10 @@ export default function WorkTrackingContextProvider({ children }) {
       id: 3,
       workOrderCode: "5998-1",
       productType: "ip",
-      customer: "Yok",
-      image: {},
+      customer: "",
+      image: "/dogal-jut-cuval-ipi-hasir-ip-e19652.jpg",
       startedAt: "13.12.2023",
-      finishedAt: "Devam ediyor",
+      finishedAt: "",
       active: true,
       jobType: "normal",
       targetAmount: [
@@ -327,7 +327,7 @@ export default function WorkTrackingContextProvider({ children }) {
             },
           ],
           workOrderCode: "",
-          transactionPointType: "ipdeposu",
+          transactionPointType: "İp Deposu",
           transactionPoint: "İp deposu",
         },
         {
@@ -345,7 +345,7 @@ export default function WorkTrackingContextProvider({ children }) {
             },
           ],
           workOrderCode: "",
-          transactionPointType: "müşteri",
+          transactionPointType: "Müşteri",
           transactionPoint: "Kemal",
         },
       ],
@@ -355,7 +355,8 @@ export default function WorkTrackingContextProvider({ children }) {
       workOrderCode: "9514-1",
       productType: "ip",
       customer: "Necati Uyumaz",
-      image: {},
+      image:
+        "/kagit-ip-450-500gr-no1-seker-pembe-ihal-kagit-ip-ithal-12732-15-B.jpg",
       startedAt: "13.12.2023",
       finishedAt: "13.12.2023",
       active: false,
@@ -384,7 +385,7 @@ export default function WorkTrackingContextProvider({ children }) {
             },
           ],
           workOrderCode: "",
-          transactionPointType: "ipdeposu",
+          transactionPointType: "İp Deposu",
           transactionPoint: "İp deposu",
         },
         {
@@ -402,7 +403,7 @@ export default function WorkTrackingContextProvider({ children }) {
             },
           ],
           workOrderCode: "",
-          transactionPointType: "müşteri",
+          transactionPointType: "Müşteri",
           transactionPoint: "Necati Uyumaz",
         },
       ],
@@ -495,9 +496,9 @@ export default function WorkTrackingContextProvider({ children }) {
       type: "yıkama",
     },
   ]);
-  const [selectedWorkOrder, setSelectedWorkOrder] = useState(workOrders[0]);
+  const [selectedWorkOrder, setSelectedWorkOrder] = useState(null);
   const [selectedTransactionPoint, setSelectedTransactionPoint] =
-    useState("ipdeposu");
+    useState("İp Deposu");
   return (
     <WorkTrackingContext.Provider
       value={{

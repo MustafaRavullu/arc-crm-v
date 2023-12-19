@@ -1,28 +1,125 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ProgressBar from "./ProgressBar";
 import { v4 as uuidv4 } from "uuid";
 import ButtonSelect from "./ButtonSelect";
 import { toast } from "sonner";
 import Select from "./Select";
 import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { useSession } from "next-auth/react";
+
+// {
+//   id: 1,
+//   operationType: "teslimEt",
+//   subcontractorFollower: "Mehmet",
+//   operationNumber: "1",
+//   operationTime: "12.12.2023 16:03:10",
+//   workOrderCode: "1234-1",
+//   fiberAmount: [
+//     {
+//       id: 1,
+//       code: "23424",
+//       amount: "300",
+//       unit: "kg",
+//     },
+//     {
+//       id: 2,
+//       code: "23423",
+//       amount: "11",
+//       unit: "kg",
+//     },
+//   ],
+//   transactionPointType: "ipdeposu",
+//   transactionPoint: "İp deposu",
+// },
+// {
+//   id: 2,
+//   operationType: "teslimAl",
+//   subcontractorFollower: "Mehmet",
+//   operationNumber: "2",
+//   operationTime: "12.12.2023 16:30:45",
+//   workOrderCode: "1234-1",
+//   productAmount: [
+//     {
+//       id: 1,
+//       color: "taş",
+//       amount: "5000",
+//     },
+//     {
+//       id: 2,
+//       color: "mavi",
+//       amount: "4000",
+//     },
+//   ],
+//   transactionPointType: "ipdeposu",
+//   transactionPoint: "İp deposu",
+// }
 
 function WorkerForm() {
+  const { data: session } = useSession();
   function handleSubmit(event) {
     event.preventDefault();
     if (formData.transactionPoint !== "") {
-      setFormData(initialFormValues);
+      setProductTypeSelect({ productType: "" });
+      setFormData({
+        ...formData,
+        subcontractorFollower:
+          session?.user?.email.split("@")[0].charAt(0).toLocaleUpperCase("tr") +
+          session?.user?.email.split("@")[0].slice(1),
+        operationTime: new Date().toLocaleString("tr-TR"),
+      });
+
       setActivePage(1);
       toast.success(
         "İşleminiz başarıyla gerçekleştirildi. Yeni işlem yapmak için hazırsınız.",
-        { position: "top-right" }
+        { position: "top-center" }
       );
       // form gönderme işlemi
     } else {
-      toast.error("Lütfen işlem noktası seçin!", { position: "top-right" });
+      toast.error("Lütfen işlem noktası seçin!", { position: "top-center" });
     }
   }
+  const productTransferFormStruct = {
+    id: uuidv4(),
+    operationType: "",
+    productType: "ürün",
+    subcontractorFollower:
+      session?.user?.email.split("@")[0].charAt(0).toLocaleUpperCase("tr") +
+      session?.user?.email.split("@")[0].slice(1),
+    operationNumber: "",
+    operationTime: "",
+    workOrderCode: "",
+    productAmount: [
+      {
+        id: uuidv4(),
+        color: "",
+        amount: "",
+      },
+    ],
+    transactionPointType: "",
+    transactionPoint: "",
+  };
+  const fiberTransferFormStruct = {
+    id: uuidv4(),
+    operationType: "",
+    subcontractorFollower: "",
+    productType: "ip",
+    operationNumber: "",
+    operationTime: "",
+    workOrderCode: "",
+    fiberAmount: [
+      {
+        id: uuidv4(),
+        code: "",
+        amount: "",
+        unit: "",
+      },
+    ],
+    transactionPointType: "",
+    transactionPoint: "",
+  };
+
   const initialFormValues = {
     id: uuidv4(),
     createdAt: "",
@@ -38,7 +135,7 @@ function WorkerForm() {
       },
     ],
     productCode: "",
-    productAmounts: [
+    productAmount: [
       {
         id: uuidv4(),
         color: "",
@@ -48,40 +145,55 @@ function WorkerForm() {
     transactionPointType: "",
     transactionPoint: "",
   };
-  const [formData, setFormData] = useState(initialFormValues);
+  const [productTypeSelect, setProductTypeSelect] = useState({
+    productType: "",
+  });
+  const [formData, setFormData] = useState(
+    productTypeSelect.productType === "Ürün"
+      ? productTransferFormStruct
+      : fiberTransferFormStruct
+  );
+  useEffect(() => {
+    setFormData(
+      productTypeSelect.productType === "Ürün"
+        ? productTransferFormStruct
+        : fiberTransferFormStruct
+    );
+  }, [productTypeSelect]);
+  console.log(formData);
   const [activePage, setActivePage] = useState(1);
   const productCodes = [
     {
       id: 1,
-      productCode: "1543-3-İade",
+      workOrderCode: "1543-3-İade",
     },
     {
       id: 2,
-      productCode: "5294-1",
+      workOrderCode: "5294-1",
     },
     {
       id: 3,
-      productCode: "8462-2-Y.İşleme",
+      workOrderCode: "8462-2-Y.İşleme",
     },
     {
       id: 4,
-      productCode: "4839-1",
+      workOrderCode: "4839-1",
     },
     {
       id: 5,
-      productCode: "2831-2",
+      workOrderCode: "2831-2",
     },
     {
       id: 6,
-      productCode: "6548-2",
+      workOrderCode: "6548-2",
     },
     {
       id: 7,
-      productCode: "4698-7",
+      workOrderCode: "4698-7",
     },
     {
       id: 8,
-      productCode: "3154-8",
+      workOrderCode: "3154-8",
     },
   ];
   const productTypes = [
@@ -184,53 +296,53 @@ function WorkerForm() {
   ];
   function handlePageSkip(activePage) {
     switch (activePage) {
-      case 1:
+      case 2:
         if (formData.operationType !== "") {
           setActivePage((prev) => prev + 1);
         } else {
           toast.error("Lütfen işlem tipini seçin!", {
-            position: "top-right",
+            position: "top-center",
           });
         }
         break;
-      case 2:
-        if (formData.productType !== "") {
+      case 1:
+        if (productTypeSelect.productType !== "") {
           setActivePage((prev) => prev + 1);
         } else {
           toast.error("Lütfen ürün tipini seçin!", {
-            position: "top-right",
+            position: "top-center",
           });
         }
         break;
       case 3:
         if (formData.productType.toLocaleLowerCase("tr") === "ip") {
           if (
-            formData.fiberInfos.some((fiberInfo) =>
+            formData.fiberAmount.some((fiberInfo) =>
               Object.values(fiberInfo).some((value) => value === "")
             )
           ) {
             toast.error("Lütfen bütün alanları doldurduğunzdan emin olun!", {
-              position: "top-right",
+              position: "top-center",
             });
-          } else if (formData.fiberInfos.length === 0) {
+          } else if (formData.fiberAmount.length === 0) {
             toast.error("En az bir alan olmalı. Lütfen alan ekleyin!", {
-              position: "top-right",
+              position: "top-center",
             });
           } else {
             setActivePage((prev) => prev + 1);
           }
         } else {
           if (
-            formData.productAmounts.some((productAmount) =>
+            formData.productAmount.some((productAmount) =>
               Object.values(productAmount).some((value) => value === "")
             )
           ) {
             toast.error("Lütfen bütün alanları doldurduğunzdan emin olun!", {
-              position: "top-right",
+              position: "top-center",
             });
-          } else if (formData.productAmounts.length === 0) {
+          } else if (formData.productAmount.length === 0) {
             toast.error("En az bir alan olmalı. Lütfen alan ekleyin!", {
-              position: "top-right",
+              position: "top-center",
             });
           } else {
             setActivePage((prev) => prev + 1);
@@ -242,7 +354,7 @@ function WorkerForm() {
           setActivePage((prev) => prev + 1);
         } else {
           toast.error("Lütfen ürün kodunu seçin!", {
-            position: "top-right",
+            position: "top-center",
           });
         }
         break;
@@ -251,7 +363,7 @@ function WorkerForm() {
           setActivePage((prev) => prev + 1);
         } else {
           toast.error("Lütfen işlem noktası tipi seçin!", {
-            position: "top-right",
+            position: "top-center",
           });
         }
         break;
@@ -267,8 +379,8 @@ function WorkerForm() {
   function handleFiberItemAdd() {
     setFormData({
       ...formData,
-      fiberInfos: [
-        ...formData.fiberInfos,
+      fiberAmount: [
+        ...formData.fiberAmount,
         {
           id: uuidv4(),
           code: "",
@@ -277,20 +389,20 @@ function WorkerForm() {
         },
       ],
     });
-    toast.success("Yeni alan eklendi", { position: "top-right" });
+    toast.success("Yeni alan eklendi", { position: "top-center" });
   }
   function handleFiberItemDelete(id) {
-    const updatedFiberInfos = [...formData.fiberInfos];
+    const updatedFiberInfos = [...formData.fiberAmount];
     updatedFiberInfos.splice(id, 1);
-    setFormData({ ...formData, fiberInfos: [...updatedFiberInfos] });
+    setFormData({ ...formData, fiberAmount: [...updatedFiberInfos] });
     toast.success("Alan silindi", {
-      position: "top-right",
+      position: "top-center",
     });
   }
   function handleFiberInputChange(event, index) {
-    const onChangeArray = formData.fiberInfos;
+    const onChangeArray = formData.fiberAmount;
     onChangeArray[index].amount = event.target.value;
-    setFormData({ ...formData, fiberInfos: onChangeArray });
+    setFormData({ ...formData, fiberAmount: onChangeArray });
   }
   const productColors = [
     {
@@ -311,15 +423,15 @@ function WorkerForm() {
     },
   ];
   function handleProductAmountInputChange(event, index) {
-    const onChangeArray = formData.productAmounts;
+    const onChangeArray = formData.productAmount;
     onChangeArray[index].amount = event.target.value;
-    setFormData({ ...formData, productAmounts: onChangeArray });
+    setFormData({ ...formData, productAmount: onChangeArray });
   }
   function handleProductAmountItemAdd() {
     setFormData({
       ...formData,
-      productAmounts: [
-        ...formData.productAmounts,
+      productAmount: [
+        ...formData.productAmount,
         {
           id: uuidv4(),
           color: "",
@@ -327,14 +439,14 @@ function WorkerForm() {
         },
       ],
     });
-    toast.success("Yeni alan eklendi", { position: "top-right" });
+    toast.success("Yeni alan eklendi", { position: "top-center" });
   }
   function handleProductAmountItemDelete(index) {
-    const updatedProductAmounts = [...formData.productAmounts];
+    const updatedProductAmounts = [...formData.productAmount];
     updatedProductAmounts.splice(index, 1);
-    setFormData({ ...formData, productAmounts: [...updatedProductAmounts] });
+    setFormData({ ...formData, productAmount: [...updatedProductAmounts] });
     toast.success("Alan silindi", {
-      position: "top-right",
+      position: "top-center",
     });
   }
 
@@ -345,7 +457,7 @@ function WorkerForm() {
         onSubmit={handleSubmit}
         className="w-full justify-between flex-1 flex flex-col "
       >
-        {activePage === 1 && (
+        {activePage === 2 && (
           <div className="flex flex-col gap-6">
             <p className="font-semibold text-lg">İşlem Tipini Seçin:</p>
             <div className="flex flex-col gap-3">
@@ -359,7 +471,7 @@ function WorkerForm() {
             </div>
           </div>
         )}
-        {activePage === 2 && (
+        {activePage === 1 && (
           <div className="flex flex-col gap-6">
             <p className="font-semibold text-lg">Ürün Tipini Seçin:</p>
             <div className="flex flex-col gap-5">
@@ -367,8 +479,8 @@ function WorkerForm() {
                 items={productTypes}
                 property="productType"
                 searchActive={false}
-                formData={formData}
-                setFormData={setFormData}
+                formData={productTypeSelect}
+                setFormData={setProductTypeSelect}
               />
             </div>
           </div>
@@ -387,7 +499,7 @@ function WorkerForm() {
                   Yeni Alan Ekle
                 </button>
                 <div className="flex flex-col   divide-y-2 divide-gray-100 dark:divide-gray-600 h-[calc(100vh-22rem)] overflow-auto">
-                  {formData.fiberInfos.map((fiber, index) => (
+                  {formData.fiberAmount.map((fiber, index) => (
                     <div key={index} className="flex flex-col gap-1 py-5">
                       <Select
                         property="code"
@@ -397,7 +509,7 @@ function WorkerForm() {
                         title="İplik kodunu seçin"
                         searchActive={true}
                         complex={true}
-                        complexProperty="fiberInfos"
+                        complexProperty="fiberAmount"
                         complexIndex={index}
                       />
                       <input
@@ -417,7 +529,7 @@ function WorkerForm() {
                         title="Birim seçin"
                         searchActive={false}
                         complex={true}
-                        complexProperty="fiberInfos"
+                        complexProperty="fiberAmount"
                         complexIndex={index}
                       />
                       <button
@@ -440,7 +552,7 @@ function WorkerForm() {
               <div className="flex flex-col gap-5">
                 <ButtonSelect
                   items={productCodes}
-                  property="productCode"
+                  property="workOrderCode"
                   searchActive={true}
                   formData={formData}
                   setFormData={setFormData}
@@ -493,7 +605,7 @@ function WorkerForm() {
                   Yeni Alan Ekle
                 </button>
                 <div className="flex flex-col   divide-y-2 divide-gray-100 dark:divide-gray-600 h-[calc(100vh-22rem)] overflow-auto">
-                  {formData.productAmounts.map((product, index) => (
+                  {formData.productAmount.map((product, index) => (
                     <div key={index} className="flex flex-col gap-1 py-5">
                       <Select
                         property="color"
@@ -503,7 +615,7 @@ function WorkerForm() {
                         title="Ürün rengini seçin"
                         searchActive={true}
                         complex={true}
-                        complexProperty="productAmounts"
+                        complexProperty="productAmount"
                         complexIndex={index}
                       />
                       <input
@@ -535,7 +647,7 @@ function WorkerForm() {
               <div className="flex flex-col gap-5">
                 <ButtonSelect
                   items={productCodes}
-                  property="productCode"
+                  property="workOrderCode"
                   searchActive={true}
                   formData={formData}
                   setFormData={setFormData}

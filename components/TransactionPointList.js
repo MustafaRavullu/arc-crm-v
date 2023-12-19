@@ -15,17 +15,17 @@ export default function TransactionPointList({ data }) {
   } = useWorkTrackingContext();
 
   useEffect(() => {
-    setSelectedTransactionPoint("ipdeposu");
+    setSelectedTransactionPoint("İp Deposu");
   }, [selectedWorkOrder.productType]);
   return (
     <div className="h-full relative">
-      <div className="absolute inset-0 flex flex-col gap-2 overflow-auto">
+      <div className="absolute inset-0 flex flex-row overflow-auto md:flex-col gap-2 ">
         {data.map((item) => (
           <button
             key={item.id}
             type="button"
             onClick={() => setSelectedTransactionPoint(item.type)}
-            className={`text-left py-2.5 px-6 font-semibold flex justify-between rounded-lg ${
+            className={`text-left whitespace-nowrap py-2.5 px-6 font-semibold flex justify-between rounded-lg ${
               item.type === selectedTransactionPoint
                 ? "bg-black text-white dark:bg-white dark:text-black"
                 : "hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black"

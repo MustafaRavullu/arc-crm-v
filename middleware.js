@@ -17,6 +17,24 @@ export default withAuth(
     ) {
       return NextResponse.rewrite(new URL("/denied", request.url));
     }
+    if (
+      request.nextUrl.pathname.startsWith("/admin/work-tracking/create") &&
+      request.nextauth.token?.role !== "admin"
+    ) {
+      return NextResponse.rewrite(new URL("/denied", request.url));
+    }
+    if (
+      request.nextUrl.pathname.startsWith("/admin/work-tracking/edit") &&
+      request.nextauth.token?.role !== "admin"
+    ) {
+      return NextResponse.rewrite(new URL("/denied", request.url));
+    }
+    if (
+      request.nextUrl.pathname.startsWith("/admin/work-tracking/delete") &&
+      request.nextauth.token?.role !== "admin"
+    ) {
+      return NextResponse.rewrite(new URL("/denied", request.url));
+    }
   },
   {
     callbacks: {

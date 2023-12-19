@@ -14,42 +14,42 @@ export default function TrackingPanel() {
       data: [
         {
           id: 1,
-          type: "ipdeposu",
+          type: "İp Deposu",
           label: "İp Deposu",
         },
         {
           id: 2,
-          type: "dokuma",
+          type: "Dokuma",
           label: "Dokuma",
         },
         {
           id: 3,
-          type: "konfeksiyon",
+          type: "Konfeksiyon",
           label: "Konfeksiyon",
         },
         {
           id: 4,
-          type: "ütü",
+          type: "Ütü",
           label: "Ütü",
         },
         {
           id: 5,
-          type: "aksesuar",
+          type: "Aksesuar",
           label: "Aksesuar",
         },
         {
           id: 6,
-          type: "yıkama",
+          type: "Yıkama",
           label: "Yıkama",
         },
         {
           id: 7,
-          type: "bitmişmaldeposu",
-          label: "Bitmiş Mal Deposu",
+          type: "Bitmiş Ürün Deposu",
+          label: "Bitmiş Ürün Deposu",
         },
         {
           id: 8,
-          type: "müşteri",
+          type: "Müşteri",
           label: "Müşteri",
         },
       ],
@@ -60,20 +60,20 @@ export default function TrackingPanel() {
       data: [
         {
           id: 1,
-          type: "ipdeposu",
+          type: "İp Deposu",
           label: "İp Deposu",
         },
         {
           id: 2,
-          type: "müşteri",
+          type: "Müşteri",
           label: "Müşteri",
         },
       ],
     },
   ];
   return (
-    <div className="h-full flex p-6 gap-6">
-      <div className="flex-[2]">
+    <div className="h-full flex flex-col md:flex-row p-6 gap-6">
+      <div className="md:flex-[2] h-[40px] md:h-auto ">
         <TransactionPointList
           data={
             selectedWorkOrder.productType === "ürün"
@@ -82,7 +82,7 @@ export default function TrackingPanel() {
           }
         />
       </div>
-      <div className="flex-[5]">
+      <div className="md:flex-[5] h-[500px] md:h-auto">
         <TransactionPointStories
           data={selectedWorkOrder.stories.filter(
             (item) => item.transactionPointType === selectedTransactionPoint

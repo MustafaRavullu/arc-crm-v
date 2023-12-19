@@ -63,7 +63,7 @@ function Select({
         onClick={() => {
           setIsMenuOpen(!isMenuOpen);
         }}
-        className="flex justify-between w-full border border-gray-100 rounded-lg p-3 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600"
+        className="flex justify-between w-full border border-arc_black rounded-lg p-3 dark:border-white simple_button"
       >
         {adjustTitle()}
         <ChevronDownIcon className="w-5 aspect-square" />

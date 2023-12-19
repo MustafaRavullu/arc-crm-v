@@ -16,115 +16,176 @@ export default function WorkOrderDetails({ productType }) {
       id: 1,
       title: "Müşteri",
       icon: <UserIcon className="w-5" />,
-      value: selectedWorkOrder.customer,
+      value:
+        selectedWorkOrder && selectedWorkOrder.customer !== ""
+          ? selectedWorkOrder.customer
+          : "-",
     },
     {
       id: 2,
       title: "Başlangıç Zamanı",
       icon: <PlayIcon className="w-5" />,
-      value: selectedWorkOrder.startedAt,
+      value:
+        selectedWorkOrder && selectedWorkOrder.startedAt !== ""
+          ? selectedWorkOrder.startedAt
+          : "-",
     },
     {
       id: 3,
       title: "Bitiş Zamanı",
       icon: <StopIcon className="w-5" />,
-      value: selectedWorkOrder.finishedAt,
+      value:
+        selectedWorkOrder && selectedWorkOrder.finishedAt !== ""
+          ? selectedWorkOrder.finishedAt
+          : "Devam ediyor",
     },
   ];
   const specificDetails = [
     {
       id: 1,
       title: "Gramaj",
-      value: selectedWorkOrder.grammage,
+      value:
+        selectedWorkOrder && selectedWorkOrder.grammage !== ""
+          ? selectedWorkOrder.grammage
+          : "-",
     },
     {
       id: 2,
       title: "İplik Türleri",
-      value: selectedWorkOrder.fiber
-        ?.map((item) => item.charAt(0).toUpperCase() + item.slice(1))
-        .join(", "),
+      value: selectedWorkOrder
+        ? selectedWorkOrder.fiber
+            ?.map((item) => item.charAt(0).toUpperCase() + item.slice(1))
+            .join(", ")
+        : "-",
     },
     {
       id: 3,
       title: "Açıklama",
       value:
-        selectedWorkOrder.description?.charAt(0).toLocaleUpperCase("tr") +
-        selectedWorkOrder.description?.slice(1),
+        selectedWorkOrder && selectedWorkOrder.description
+          ? selectedWorkOrder.description?.charAt(0).toLocaleUpperCase("tr") +
+            selectedWorkOrder.description?.slice(1)
+          : "-",
     },
     {
       id: 4,
       title: "Beden Boyu",
-      value: selectedWorkOrder.bedenBoy,
+      value:
+        selectedWorkOrder && selectedWorkOrder.bedenBoy !== ""
+          ? selectedWorkOrder.bedenBoy
+          : "-",
     },
     {
       id: 5,
       title: "Beden Eni",
-      value: selectedWorkOrder.bedenEn,
+      value:
+        selectedWorkOrder && selectedWorkOrder.bedenEn !== ""
+          ? selectedWorkOrder.bedenEn
+          : "-",
     },
     {
       id: 6,
       title: "Kol Boyu",
-      value: selectedWorkOrder.kolBoyu,
+      value:
+        selectedWorkOrder && selectedWorkOrder.kolBoyu !== ""
+          ? selectedWorkOrder.kolBoyu
+          : "-",
     },
     {
       id: 7,
       title: "Kol Pazu Ölçüsü",
-      value: selectedWorkOrder.kolPazu,
+      value:
+        selectedWorkOrder && selectedWorkOrder.kolBoyu !== ""
+          ? selectedWorkOrder.kolPazu
+          : "-",
     },
     {
       id: 8,
       title: "Kol Eni",
-      value: selectedWorkOrder.kolEni,
+      value:
+        selectedWorkOrder && selectedWorkOrder.kolEni !== ""
+          ? selectedWorkOrder.kolEni
+          : "-",
     },
     {
       id: 9,
       title: "Ön Yaka Düşüklüğü",
-      value: selectedWorkOrder.onYakaDusuklugu,
+      value:
+        selectedWorkOrder && selectedWorkOrder.onYakaDusuklugu !== ""
+          ? selectedWorkOrder.onYakaDusuklugu
+          : "-",
     },
     {
       id: 10,
       title: "Arka Yaka Düşüklüğü",
-      value: selectedWorkOrder.arkaYakaDusuklugu,
+      value:
+        selectedWorkOrder && selectedWorkOrder.arkaYakaDusuklugu !== ""
+          ? selectedWorkOrder.arkaYakaDusuklugu
+          : "-",
     },
     {
       id: 11,
       title: "Omuz Düşüklüğü",
-      value: selectedWorkOrder.omuzDusuklugu,
+      value:
+        selectedWorkOrder && selectedWorkOrder.omuzDusuklugu !== ""
+          ? selectedWorkOrder.omuzDusuklugu
+          : "-",
     },
     {
       id: 12,
       title: "Ense Ölçüsü",
-      value: selectedWorkOrder.ense,
+      value:
+        selectedWorkOrder && selectedWorkOrder.ense !== ""
+          ? selectedWorkOrder.ense
+          : "-",
     },
     {
       id: 13,
       title: "Beden Ön Band Genişliği",
-      value: selectedWorkOrder.bedenOnBandGenisligi,
+      value:
+        selectedWorkOrder && selectedWorkOrder.bedenOnBandGenisligi !== ""
+          ? selectedWorkOrder.bedenOnBandGenisligi
+          : "-",
     },
     {
       id: 14,
       title: "Beden Ön Band Uzunluğu",
-      value: selectedWorkOrder.bedenOnBandUzunlugu,
+      value:
+        selectedWorkOrder && selectedWorkOrder.bedenOnBandUzunlugu !== ""
+          ? selectedWorkOrder.bedenOnBandUzunlugu
+          : "-",
     },
     {
       id: 15,
       title: "Beden Lastik Boyu",
-      value: selectedWorkOrder.bedenLastikBoyu,
+      value:
+        selectedWorkOrder && selectedWorkOrder.bedenLastikBoyu !== ""
+          ? selectedWorkOrder.bedenLastikBoyu
+          : "-",
     },
     {
       id: 16,
       title: "Yaka Yüksekliği",
-      value: selectedWorkOrder.yakaYuksekligi,
+      value:
+        selectedWorkOrder && selectedWorkOrder.yakaYuksekligi !== ""
+          ? selectedWorkOrder.yakaYuksekligi
+          : "-",
     },
     {
       id: 17,
       title: "Yaka Eni",
-      value: selectedWorkOrder.yakaEni,
+      value:
+        selectedWorkOrder && selectedWorkOrder.yakaEni !== ""
+          ? selectedWorkOrder.yakaEni
+          : "-",
     },
     {
       id: 18,
       title: "Makina No",
-      value: selectedWorkOrder.makinaNo,
+      value:
+        selectedWorkOrder && selectedWorkOrder.makinaNo !== ""
+          ? selectedWorkOrder.makinaNo
+          : "-",
     },
   ];
   return (

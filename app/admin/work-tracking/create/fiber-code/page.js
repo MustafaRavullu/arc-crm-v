@@ -13,18 +13,21 @@ export default function FiberCode() {
   return (
     <form
       onSubmit={handleSubmit}
-      className=" relative shadow-md h-full bg-white dark:bg-arc_black"
+      className=" relative shadow-md  h-[calc(100vh-15rem)] bg-white dark:bg-arc_black"
     >
-      <div className="absolute inset-0 p-6 flex flex-wrap flex-col gap-2">
-        <Input
-          type={"text"}
-          placeholder={"İplik kodu girin"}
-          label={"İplik Kodu"}
-          formData={formData}
-          setFormData={setFormData}
-          name={"code"}
-        />
-        <button type="submit" className="simple_button">
+      <div className="absolute inset-0 p-6 flex flex-col gap-2">
+        <fieldset className="border h-fit md:w-fit border-black dark:border-white p-2 w-full     rounded-lg">
+          <legend className="font-bold">Adım 1(Zorunlu)</legend>
+          <Input
+            type={"text"}
+            placeholder={"İplik kodu girin"}
+            label={"İplik Kodu"}
+            formData={formData}
+            setFormData={setFormData}
+            name={"code"}
+          />
+        </fieldset>
+        <button type="submit" className="simple_button w-full md:w-fit">
           İplik Kodunu Oluştur
         </button>
       </div>

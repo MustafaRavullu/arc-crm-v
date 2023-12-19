@@ -1,3 +1,10 @@
+"use client";
+import { redirect } from "next/navigation";
+import { useLayoutEffect } from "react";
+
 export default function Edit() {
-  return <div>Edit</div>;
+  useLayoutEffect(() => {
+    redirect("/admin/work-tracking/edit/work-order");
+  }, []);
+  return <div></div>;
 }

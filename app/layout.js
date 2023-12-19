@@ -1,6 +1,7 @@
 import { Manrope } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/Providers";
+import { Toaster } from "sonner";
 
 const manrope = Manrope({ subsets: ["latin"] });
 
@@ -14,6 +15,7 @@ export default function RootLayout({ children }) {
     <html lang="en" suppressHydrationWarning>
       <body className={`text-sm ${manrope.className}`}>
         <Providers>{children}</Providers>
+        <Toaster richColors />
       </body>
     </html>
   );

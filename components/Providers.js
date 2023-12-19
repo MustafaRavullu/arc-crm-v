@@ -6,7 +6,7 @@ import { ThemeProvider } from "next-themes";
 export default function Providers({ children }) {
   return (
     <SessionProvider>
-      <ThemeProvider attribute="class">{children}</ThemeProvider>;
+      <ThemeProvider attribute="class">{children}</ThemeProvider>
     </SessionProvider>
   );
 }

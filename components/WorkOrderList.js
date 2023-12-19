@@ -2,9 +2,11 @@
 
 import { useWorkTrackingContext } from "@/contexts/workTrackingContext";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 export default function WorkOrderList({ data }) {
+  const pathname = usePathname();
   const [query, setQuery] = useState("");
   const [filterParams, setFilterParams] = useState({
     productType: "ürün",
@@ -43,9 +45,15 @@ export default function WorkOrderList({ data }) {
     (item) => item.jobType === filterParams.jobType
   );
   return (
-    <div className="h-full flex flex-col gap-6 p-6">
+    <div className="min-h-[400px] md:min-h-full flex flex-col gap-6 p-6">
       {/* Başlık */}
-      <div className="font-bold text-lg">İŞ EMİRLERİ</div>
+      <div className="font-bold text-lg">
+        {pathname.includes("active-work-orders")
+          ? "AKTİF İŞ EMİRLERİ"
+          : pathname.includes("completed-work-orders")
+          ? "TAMAMLANMIŞ İŞ EMİRLERİ"
+          : ""}
+      </div>
       {/* Arama Kutusu */}
       <div className="flex items-center border-b border-arc_black dark:border-white">
         <div className="pl-3">

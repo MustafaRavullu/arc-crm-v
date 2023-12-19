@@ -5,6 +5,8 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
+import Dropdown from "./Dropdown";
+import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
 
 export default function Navbar() {
   const { data: session } = useSession();
@@ -69,7 +71,7 @@ export default function Navbar() {
       <div className="font-bold text-4xl">
         {titles.map((item) => pathname.includes(item.path) && item.label)}
       </div>
-      <div className="flex">
+      <div className=" hidden md:flex">
         {filteredNavbarLinks.map((item) => (
           <Link
             key={item.id}
@@ -82,6 +84,24 @@ export default function Navbar() {
             {item.label}
           </Link>
         ))}
+      </div>
+      <div className="flex md:hidden">
+        <Dropdown buttonContent={<EllipsisHorizontalIcon className="w-7" />}>
+          <div className="h-full w-full p-3">
+            {filteredNavbarLinks.map((item) => (
+              <Link
+                key={item.id}
+                href={item.href}
+                className={`flex text-left whitespace-nowrap  font-semibold py-2.5 px-5 rounded-lg ${
+                  pathname.includes(item.href) &&
+                  "bg-arc_black text-white dark:bg-white dark:text-black"
+                }`}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
+        </Dropdown>
       </div>
     </nav>
   );

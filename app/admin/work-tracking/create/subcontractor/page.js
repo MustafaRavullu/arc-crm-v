@@ -18,25 +18,31 @@ export default function Subcontractor() {
   return (
     <form
       onSubmit={handleSubmit}
-      className=" relative shadow-md h-full bg-white dark:bg-arc_black"
+      className=" relative shadow-md  h-[calc(100vh-15rem)] bg-white dark:bg-arc_black"
     >
-      <div className="absolute inset-0 p-6 flex flex-wrap flex-col gap-2">
-        <Input
-          type={"text"}
-          placeholder={"Fason ismi girin"}
-          label={"Fason İsmi"}
-          formData={formData}
-          setFormData={setFormData}
-          name={"name"}
-        />
-        <BasicSelect
-          data={subcontractors}
-          setFormData={setFormData}
-          formData={formData}
-          property={"type"}
-          label={"Fason Tipi"}
-        />
-        <button type="submit" className="simple_button">
+      <div className="absolute inset-0 p-6 flex flex-col gap-2">
+        <fieldset className="border h-fit md:w-fit border-black dark:border-white p-2 w-full     rounded-lg">
+          <legend className="font-bold">Adım 1(Zorunlu)</legend>
+          <Input
+            type={"text"}
+            placeholder={"Fason ismi girin"}
+            label={"Fason İsmi"}
+            formData={formData}
+            setFormData={setFormData}
+            name={"name"}
+          />
+        </fieldset>
+        <fieldset className="border h-fit md:w-fit border-black dark:border-white p-2 w-full     rounded-lg">
+          <legend className="font-bold">Adım 2(Zorunlu)</legend>
+          <BasicSelect
+            data={subcontractors}
+            setFormData={setFormData}
+            formData={formData}
+            property={"type"}
+            label={"Fason Tipi"}
+          />
+        </fieldset>
+        <button type="submit" className="simple_button w-full md:w-fit">
           Fason Oluştur
         </button>
       </div>
@@ -46,7 +52,7 @@ export default function Subcontractor() {
 
 const Input = ({ label, type, placeholder, formData, setFormData, name }) => {
   return (
-    <div className="flex flex-col gap-1 w-fit">
+    <div className="flex flex-col gap-1 w-full">
       <div className="font-semibold">{label}</div>
       <input
         type={type}
@@ -69,14 +75,14 @@ const BasicSelect = ({ data, setFormData, formData, property, label }) => {
     setIsOpen(false);
   };
   return (
-    <div className="relative flex flex-col gap-1 w-fit" ref={ref}>
+    <div className="relative flex flex-col gap-1 w-full" ref={ref}>
       <label htmlFor="" className="font-semibold">
         {label}
       </label>
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className="simple_button w-[200px] flex justify-between gap-10"
+        className="simple_button w-full flex justify-between gap-10"
       >
         {formData[property] ? formData[property] : "Lütfen seçin"}
         <ChevronDownIcon className="w-5" />

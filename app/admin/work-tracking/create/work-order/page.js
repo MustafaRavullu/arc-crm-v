@@ -47,11 +47,11 @@ export default function WorkOrder() {
     makinaNo: "", // bitti
     targetAmount: [
       // select
-      {
-        id: 1,
-        color: "",
-        amount: "",
-      },
+      // {
+      //   id: 1,
+      //   color: "",
+      //   amount: "",
+      // },
     ],
     stories: [],
   });
@@ -196,117 +196,150 @@ export default function WorkOrder() {
   return (
     <form
       onSubmit={handleSubmit}
-      className=" relative shadow-md h-full bg-white dark:bg-arc_black"
+      className=" relative shadow-md h-[calc(100vh-15rem)] md:mb-0  md:h-full bg-white dark:bg-arc_black"
     >
-      <div className="absolute inset-0 p-6 flex flex-wrap flex-col gap-2">
-        <Input
-          type={"text"}
-          placeholder={"İş emri kodu girin"}
-          label={"İş Emri Kodu"}
-          formData={formData}
-          setFormData={setFormData}
-          name={"workOrderCode"}
-        />
-        <div className="flex flex-col gap-1">
-          <div className="font-semibold">İş Emri Fotoğrafı</div>
-          {formData.image ? (
-            <div className="flex gap-2">
-              {formData.image.name}{" "}
-              <button
-                type="button"
-                onClick={() => setFormData({ ...formData, image: null })}
-              >
-                <TrashIcon className="w-5" />
-              </button>
-            </div>
-          ) : (
-            <label
-              htmlFor="image-input"
-              className="cursor-pointer font-semibold border w-fit border-black p-3 dark:border-white rounded-lg px-5 py-2.5 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black"
-            >
-              Fotoğraf Seç
-              <input
-                type="file"
-                id="image-input"
-                className="hidden"
-                onChange={(event) =>
-                  setFormData({ ...formData, image: event.target.files?.[0] })
-                }
-              />
-            </label>
-          )}
-        </div>
-        {inputInfos.map((item) => (
-          <Input
-            key={item.id}
-            {...item}
-            formData={formData}
-            setFormData={setFormData}
-          />
-        ))}
-        <div className="flex flex-col gap-1">
-          <label htmlFor="" className="font-semibold">
-            Açıklama
-          </label>
-          <textarea
-            value={formData.description}
-            onChange={(event) =>
-              setFormData({ ...formData, description: event.target.value })
-            }
-            placeholder="İş emri açıklaması girin"
-            className="bg-white outline-none dark:bg-arc_black p-3 border border-arc_black dark:border-white rounded-lg"
-          ></textarea>
-        </div>
-        <BasicSelect
-          data={customers}
-          setFormData={setFormData}
-          formData={formData}
-          property={"customer"}
-          label={"Müşteri"}
-        />
-        <MultipleSelect formData={formData} setFormData={setFormData} />
-        <div className="flex-1 relative">
-          <div className="absolute inset-0 overflow-auto flex flex-col gap-2">
-            <button
-              type="button"
-              onClick={handleFiberItemAdd}
-              className="flex justify-center p-3 z-40 rounded-lg sticky top-0 bg-white dark:bg-black border border-gray-100 dark:border-gray-600"
-            >
-              <PlusIcon className="w-5 aspect-square" />
-              Yeni Alan Ekle
-            </button>
-            {formData.targetAmount.map((item, index) => (
-              <div className="flex flex-col gap-2">
-                <Select
-                  property="color"
-                  items={colors}
-                  formData={formData}
-                  setFormData={setFormData}
-                  title="Renk seçin"
-                  searchActive={true}
-                  complex={true}
-                  complexProperty="targetAmount"
-                  complexIndex={index}
-                />
-                <input
-                  type="number"
-                  placeholder="Miktar girin"
-                  value={item.amount}
-                  onChange={(event) => handleFiberInputChange(event, index)}
-                  className="w-full border bg-transparent border-gray-100 dark:border-gray-600 rounded-lg flex gap-1 focus-within:border-black dark:focus-within:border-white outline-none p-3"
-                />
-                <button
-                  type="button"
-                  className="w-fit mx-auto"
-                  onClick={() => handleFiberItemDelete(index)}
+      <div className="absolute inset-0 overflow-auto p-6 flex  flex-col gap-2">
+        <div className="flex flex-col md:flex-row gap-3 md:w-[900px] ">
+          <fieldset className="border border-black dark:border-white p-2 w-full md:flex-1    rounded-lg">
+            <legend className="font-bold">Adım 1(Zorunlu)</legend>
+            <Input
+              type={"text"}
+              placeholder={"İş emri kodu girin"}
+              label={"İş Emri Kodu"}
+              formData={formData}
+              setFormData={setFormData}
+              name={"workOrderCode"}
+            />
+          </fieldset>
+          <fieldset className="border border-black dark:border-white p-2 w-full md:flex-1  rounded-lg">
+            <legend className="font-bold">Adım 2(Zorunlu)</legend>
+            <div className="flex flex-col gap-1">
+              <div className="font-semibold">İş Emri Fotoğrafı</div>
+              {formData.image ? (
+                <div className="flex gap-2">
+                  {formData.image.name}{" "}
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, image: null })}
+                  >
+                    <TrashIcon className="w-5" />
+                  </button>
+                </div>
+              ) : (
+                <label
+                  htmlFor="image-input"
+                  className="cursor-pointer simple_button w-full  text-center"
                 >
-                  <TrashIcon className="w-8 aspect-square text-red-500" />
-                </button>
-              </div>
+                  Fotoğraf Seç
+                  <input
+                    type="file"
+                    id="image-input"
+                    className="hidden"
+                    onChange={(event) =>
+                      setFormData({
+                        ...formData,
+                        image: event.target.files?.[0],
+                      })
+                    }
+                  />
+                </label>
+              )}
+            </div>
+          </fieldset>
+          <fieldset className="md:flex md:flex-col md:flex-1 md:gap-3 border border-black dark:border-white p-2 w-full  rounded-lg">
+            <legend className="font-bold">Adım 3</legend>
+            <BasicSelect
+              data={customers}
+              setFormData={setFormData}
+              formData={formData}
+              property={"customer"}
+              label={"Müşteri"}
+            />
+          </fieldset>
+        </div>
+        <fieldset className="md:flex md:flex-col md:w-fit md:gap-3 border border-black dark:border-white p-2 w-full  rounded-lg">
+          <legend className="font-bold">Adım 4</legend>
+          <div className="md:grid md:grid-cols-7 md:gap-3 flex flex-col gap-2">
+            {inputInfos.map((item) => (
+              <Input
+                key={item.id}
+                {...item}
+                formData={formData}
+                setFormData={setFormData}
+              />
             ))}
           </div>
+          <div className="flex flex-col gap-1">
+            <label htmlFor="" className="font-semibold">
+              Açıklama
+            </label>
+            <textarea
+              value={formData.description}
+              onChange={(event) =>
+                setFormData({ ...formData, description: event.target.value })
+              }
+              placeholder="İş emri açıklaması girin"
+              className="bg-white outline-none dark:bg-arc_black p-3 border border-arc_black dark:border-white rounded-lg"
+            ></textarea>
+          </div>
+        </fieldset>
+
+        <div className="flex flex-col md:flex-row gap-3">
+          <fieldset className="md:flex md:flex-col md:w-fit md:gap-3 border border-black dark:border-white p-2 w-full  rounded-lg">
+            <legend className="font-bold">Adım 5</legend>
+            <div className="w-full md:w-[300px] h-[300px] flex flex-col gap-2 ">
+              <div className="font-semibold">Miktar</div>
+              <button
+                type="button"
+                onClick={handleFiberItemAdd}
+                className="flex justify-center text-white dark:text-black p-3 bg-arc_black z-40 rounded-lg sticky -top-6  dark:bg-white "
+              >
+                <PlusIcon className="w-5 aspect-square" />
+                Yeni Alan Ekle
+              </button>
+              <div className="flex-1 flex relative">
+                <div className="flex-1 absolute divide-y divide-arc_black dark:divide-white inset-0 overflow-auto">
+                  {formData.targetAmount.map((item, index) => (
+                    <div key={index} className="flex py-5 flex-col gap-2 ">
+                      <Select
+                        property="color"
+                        items={colors}
+                        formData={formData}
+                        setFormData={setFormData}
+                        title="Renk seçin"
+                        searchActive={true}
+                        complex={true}
+                        complexProperty="targetAmount"
+                        complexIndex={index}
+                      />
+                      <input
+                        type="number"
+                        placeholder="Miktar girin"
+                        value={item.amount}
+                        onChange={(event) =>
+                          handleFiberInputChange(event, index)
+                        }
+                        className="w-full border bg-transparent border-arc_black dark:border-white rounded-lg flex gap-1 focus-within:border-black dark:focus-within:border-white outline-none p-3"
+                      />
+                      <button
+                        type="button"
+                        className="w-fit mx-auto"
+                        onClick={() => handleFiberItemDelete(index)}
+                      >
+                        <TrashIcon className="w-8 aspect-square text-red-500" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </fieldset>
+          <fieldset className="md:flex md:flex-col md:w-fit md:gap-3 border border-black dark:border-white p-2 w-full  rounded-lg">
+            <legend className="font-bold">Adım 6(Zorunlu)</legend>
+            <MultipleSelect formData={formData} setFormData={setFormData} />
+          </fieldset>
         </div>
-        <button type="submit" className="simple_button">
+        <button type="submit" className="simple_button w-full md:w-fit">
           İş Emrini Oluştur
         </button>
       </div>
@@ -316,7 +349,7 @@ export default function WorkOrder() {
 
 const Input = ({ label, type, placeholder, formData, setFormData, name }) => {
   return (
-    <div className="flex flex-col gap-1 w-fit">
+    <div className="flex flex-col gap-1 w-full ">
       <div className="font-semibold">{label}</div>
       <input
         type={type}
@@ -343,24 +376,24 @@ const BasicSelect = ({ data, setFormData, formData, property, label }) => {
     setIsOpen(false);
   };
   return (
-    <div className="relative flex flex-col gap-1 w-fit" ref={ref}>
+    <div className="relative flex flex-col gap-1  w-full" ref={ref}>
       <label htmlFor="" className="font-semibold">
         {label}
       </label>
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className="simple_button w-[200px] flex justify-between gap-10"
+        className="simple_button  w-full flex justify-between gap-10"
       >
         {formData[property] ? formData[property] : "Lütfen seçin"}
         <ChevronDownIcon className="w-5" />
       </button>
       <div
-        className={`z-10 absolute flex flex-col gap-2 top-full right-0 left-0 rounded-lg bg-white shadow-md dark:bg-arc_black ${
+        className={`z-10 absolute flex max-h-[200px] overflow-auto flex-col gap-2 top-full right-0 left-0 rounded-lg bg-arc_black shadow-md dark:bg-white text-white dark:text-black ${
           isOpen ? "block" : "hidden"
         }`}
       >
-        <div className="flex border-b items-center border-black dark:border-white">
+        <div className="flex border-b sticky top-0 items-center border-white dark:border-arc_black">
           <div className="pl-2.5">
             <MagnifyingGlassIcon className="w-5 " />
           </div>
@@ -369,7 +402,7 @@ const BasicSelect = ({ data, setFormData, formData, property, label }) => {
             placeholder="Ara"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            className="bg-white dark:bg-arc_black p-2.5 outline-none w-[170px]"
+            className="bg-arc_black dark:bg-white p-2.5 outline-none w-[170px]"
           />
         </div>
         {filteredData.map((item) => (
@@ -392,13 +425,12 @@ const MultipleSelect = ({ setFormData, formData }) => {
   const filteredData = fiberTypes.filter((item) =>
     item.name.toLocaleLowerCase("tr").includes(query.toLocaleLowerCase("tr"))
   );
-  console.log(formData);
   return (
-    <div className="flex flex-col gap-1 w-[210px]">
+    <div className="flex flex-col gap-1 w-full md:w-[300px]">
       <label htmlFor="" className="font-semibold">
         İplik Türü
       </label>
-      <div className="h-[210px] rounded-lg bg-white shadow-md dark:bg-arc_black p-3 flex flex-col gap-2">
+      <div className="h-[210px] rounded-lg bg-white dark:bg-arc_black p-3 flex flex-col gap-2">
         <div className="flex border-b items-center border-black dark:border-white">
           <div className="pl-2.5">
             <MagnifyingGlassIcon className="w-5 " />
@@ -412,7 +444,7 @@ const MultipleSelect = ({ setFormData, formData }) => {
           />
         </div>
         <div className="flex-1 relative">
-          <div className="absolute overflow-auto inset-0 flex flex-col gap-2">
+          <div className="absolute overflow-auto h-[200px]  inset-0 flex flex-col gap-2">
             {filteredData.map((item) => (
               <button
                 key={item.id}
