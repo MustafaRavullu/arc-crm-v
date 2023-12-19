@@ -27,9 +27,9 @@ export default function Customer() {
   return (
     <form
       onSubmit={handleSubmit}
-      className=" relative shadow-md h-full bg-white dark:bg-arc_black"
+      className=" relative shadow-md  h-[calc(100vh-15rem)] bg-white dark:bg-arc_black"
     >
-      <div className="absolute inset-0 p-6 flex flex-wrap flex-col gap-2">
+      <div className="absolute inset-0 p-6 flex flex-col gap-2">
         <JustSelect
           data={customers}
           setFormData={setFormData}
