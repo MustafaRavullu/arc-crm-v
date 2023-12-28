@@ -21,7 +21,7 @@ export default function TransactionPointStories({ data }) {
             placeholder="İşlem noktasına göre filtrele"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            className="bg-white outline-none p-2.5 w-full dark:bg-arc_black"
+            className="bg-white text-base outline-none p-2.5 w-full dark:bg-arc_black"
           />
         </div>
       </div>

@@ -83,16 +83,16 @@ function Select({
               placeholder="Ara"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              className="bg-transparent outline-none w-full rounded-lg p-3"
+              className="text-base bg-transparent outline-none w-full rounded-lg p-3"
             />
           </div>
         )}
         <div className="flex flex-col gap-1 max-h-[100px] overflow-auto">
           {filteredItems.length ? (
-            filteredItems.map((item) => (
+            filteredItems.map((item, index) => (
               <input
                 type="button"
-                key={item.id}
+                key={index}
                 onClick={handleOptionClick}
                 value={item[property]}
                 className="text-left p-2 hover:bg-gray-100 dark:hover:bg-gray-600"

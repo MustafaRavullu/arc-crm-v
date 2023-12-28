@@ -8,6 +8,18 @@ import { toast } from "sonner";
 import Select from "./Select";
 import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useSession } from "next-auth/react";
+import {
+  arrayUnion,
+  collection,
+  doc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
+import { db } from "@/firebase.config";
+import { useRouter } from "next/navigation";
+import { HashLoader } from "react-spinners";
 
 // {
 //   id: 1,
@@ -58,26 +70,135 @@ import { useSession } from "next-auth/react";
 
 function WorkerForm() {
   const { data: session } = useSession();
-  function handleSubmit(event) {
-    event.preventDefault();
-    if (formData.transactionPoint !== "") {
-      setProductTypeSelect({ productType: "" });
-      setFormData({
-        ...formData,
-        subcontractorFollower:
-          session?.user?.email.split("@")[0].charAt(0).toLocaleUpperCase("tr") +
-          session?.user?.email.split("@")[0].slice(1),
-        operationTime: new Date().toLocaleString("tr-TR"),
+  useEffect(() => {
+    const getFiberAndWorkOrderCodesAndCustomers = async () => {
+      const querySnapshot = await getDocs(collection(db, "fiberCodes"));
+      const fiberCodeLists = [];
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        fiberCodeLists.push({ ...doc.data(), id: doc.id });
       });
+      const mergedArray = fiberCodeLists.flatMap((obj) => obj.arr);
+      setFiberCodes(mergedArray);
 
+      const querySnapshot2 = await getDocs(collection(db, "workOrderLists"));
+      const workOrderCodeLists = [];
+      querySnapshot2.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        workOrderCodeLists.push({ ...doc.data(), id: doc.id });
+      });
+      const mergedArray2 = workOrderCodeLists.flatMap((obj) => obj.arr);
+      setProductCodes(
+        mergedArray2.filter(
+          (item) => item.productType === "ürün" && item.active === true
+        )
+      );
+
+      const querySnapshot3 = await getDocs(collection(db, "customers"));
+      const customerLists = [];
+      querySnapshot3.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        customerLists.push({ ...doc.data(), id: doc.id });
+      });
+      const mergedArray3 = customerLists.flatMap((obj) => obj.arr);
+      setCustomers(mergedArray3);
+
+      const querySnapshot4 = await getDocs(collection(db, "colors"));
+      const colorLists = [];
+      querySnapshot4.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        colorLists.push({ ...doc.data(), id: doc.id });
+      });
+      const mergedArray4 = colorLists.flatMap((obj) => obj.arr);
+      setColors(mergedArray4);
+
+      const querySnapshot5 = await getDocs(collection(db, "subcontractors"));
+      const subcontractorLists = [];
+      querySnapshot5.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        subcontractorLists.push({ ...doc.data(), id: doc.id });
+      });
+      const mergedArray5 = subcontractorLists.flatMap((obj) => obj.arr);
+      setSubcontractors(mergedArray5);
+    };
+    getFiberAndWorkOrderCodesAndCustomers();
+  }, []);
+  const router = useRouter();
+  const [fiberCodes, setFiberCodes] = useState([]);
+  const [productCodes, setProductCodes] = useState([]);
+  const [customers, setCustomers] = useState([]);
+  const [colors, setColors] = useState([]);
+  const [subcontractors, setSubcontractors] = useState([]);
+  const [loading, setLoading] = useState(false);
+  async function handleSubmit(event) {
+    event.preventDefault();
+    setLoading(true);
+    if (formData.transactionPoint !== "") {
+      // setFormData({
+      //   ...formData,
+      //   subcontractorFollower:
+      //     session?.user?.username
+      //       .split("@")[0]
+      //       .charAt(0)
+      //       .toLocaleUpperCase("tr") +
+      //     session?.user?.username.split("@")[0].slice(1),
+      //   operationTime: new Date().toLocaleString("tr-TR"),
+      // });
+      const docRef = doc(db, "workOrders", storedWorkOrder.id);
+      if (formData.productType === "ürün") {
+        await updateDoc(docRef, {
+          stories: arrayUnion({
+            id: uuidv4(),
+            operationType: formData.operationType,
+            productType: "ürün",
+            subcontractorFollower:
+              session?.user?.username
+                .split("@")[0]
+                .charAt(0)
+                .toLocaleUpperCase("tr") +
+              session?.user?.username.split("@")[0].slice(1),
+            operationNumber: formData.operationNumber,
+            operationTime: new Date().toLocaleString("tr-TR"),
+            workOrderCode: formData.workOrderCode,
+            productAmount: formData.productAmount,
+            transactionPointType: formData.transactionPointType,
+            transactionPoint: formData.transactionPoint,
+          }),
+        });
+      } else if (formData.productType === "ip") {
+        const docRef = doc(db, "workOrders", storedWorkOrder.id);
+        await updateDoc(docRef, {
+          stories: arrayUnion({
+            id: uuidv4(),
+            operationType: formData.operationType,
+            productType: "ip",
+            subcontractorFollower:
+              session?.user?.username
+                .split("@")[0]
+                .charAt(0)
+                .toLocaleUpperCase("tr") +
+              session?.user?.username.split("@")[0].slice(1),
+            operationNumber: formData.operationNumber,
+            operationTime: new Date().toLocaleString("tr-TR"),
+            workOrderCode: formData.workOrderCode,
+            fiberAmount: formData.fiberAmount,
+            transactionPointType: formData.transactionPointType,
+            transactionPoint: formData.transactionPoint,
+          }),
+        });
+      }
+      setProductTypeSelect({ productType: "" });
       setActivePage(1);
       toast.success(
         "İşleminiz başarıyla gerçekleştirildi. Yeni işlem yapmak için hazırsınız.",
         { position: "top-center" }
       );
+      setLoading(false);
       // form gönderme işlemi
+      router.push("/worker");
     } else {
       toast.error("Lütfen işlem noktası seçin!", { position: "top-center" });
+      setLoading(false);
     }
   }
   const productTransferFormStruct = {
@@ -85,8 +206,8 @@ function WorkerForm() {
     operationType: "",
     productType: "ürün",
     subcontractorFollower:
-      session?.user?.email.split("@")[0].charAt(0).toLocaleUpperCase("tr") +
-      session?.user?.email.split("@")[0].slice(1),
+      session?.user?.username.split("@")[0].charAt(0).toLocaleUpperCase("tr") +
+      session?.user?.username.split("@")[0].slice(1),
     operationNumber: "",
     operationTime: "",
     workOrderCode: "",
@@ -160,42 +281,41 @@ function WorkerForm() {
         : fiberTransferFormStruct
     );
   }, [productTypeSelect]);
-  console.log(formData);
   const [activePage, setActivePage] = useState(1);
-  const productCodes = [
-    {
-      id: 1,
-      workOrderCode: "1543-3-İade",
-    },
-    {
-      id: 2,
-      workOrderCode: "5294-1",
-    },
-    {
-      id: 3,
-      workOrderCode: "8462-2-Y.İşleme",
-    },
-    {
-      id: 4,
-      workOrderCode: "4839-1",
-    },
-    {
-      id: 5,
-      workOrderCode: "2831-2",
-    },
-    {
-      id: 6,
-      workOrderCode: "6548-2",
-    },
-    {
-      id: 7,
-      workOrderCode: "4698-7",
-    },
-    {
-      id: 8,
-      workOrderCode: "3154-8",
-    },
-  ];
+  // const productCodes = [
+  //   {
+  //     id: 1,
+  //     workOrderCode: "1543-3-İade",
+  //   },
+  //   {
+  //     id: 2,
+  //     workOrderCode: "5294-1",
+  //   },
+  //   {
+  //     id: 3,
+  //     workOrderCode: "8462-2-Y.İşleme",
+  //   },
+  //   {
+  //     id: 4,
+  //     workOrderCode: "4839-1",
+  //   },
+  //   {
+  //     id: 5,
+  //     workOrderCode: "2831-2",
+  //   },
+  //   {
+  //     id: 6,
+  //     workOrderCode: "6548-2",
+  //   },
+  //   {
+  //     id: 7,
+  //     workOrderCode: "4698-7",
+  //   },
+  //   {
+  //     id: 8,
+  //     workOrderCode: "3154-8",
+  //   },
+  // ];
   const productTypes = [
     {
       id: 1,
@@ -220,22 +340,35 @@ function WorkerForm() {
       transactionPoint: "Veli Aksesuar",
     },
   ];
-  const fiberCodes = [
+  // const fiberCodes = [
+  //   {
+  //     id: 1,
+  //     code: "54654",
+  //   },
+  //   {
+  //     id: 2,
+  //     code: "47651",
+  //   },
+  //   {
+  //     id: 3,
+  //     code: "12345",
+  //   },
+  //   {
+  //     id: 4,
+  //     code: "98745",
+  //   },
+  // ];
+
+  const transactionPointTypesForFiberToDeliver = [
     {
-      id: 1,
-      code: "54654",
+      id: 18392370,
+      transactionPointType: "Dokuma",
     },
+  ];
+  const transactionPointTypesForFiberToReceive = [
     {
-      id: 2,
-      code: "47651",
-    },
-    {
-      id: 3,
-      code: "12345",
-    },
-    {
-      id: 4,
-      code: "98745",
+      id: 18392370,
+      transactionPointType: "İp Deposu",
     },
   ];
   const transactionPointTypes =
@@ -248,10 +381,6 @@ function WorkerForm() {
           {
             id: 2,
             transactionPointType: "Dokuma",
-          },
-          {
-            id: 3,
-            transactionPointType: "Müşteri",
           },
         ]
       : [
@@ -294,7 +423,8 @@ function WorkerForm() {
       operationType: "Teslim Et",
     },
   ];
-  function handlePageSkip(activePage) {
+  const [storedWorkOrder, setStoredWorkOrder] = useState(null);
+  async function handlePageSkip(activePage) {
     switch (activePage) {
       case 2:
         if (formData.operationType !== "") {
@@ -350,12 +480,38 @@ function WorkerForm() {
         }
         break;
       case 4:
-        if (formData.productCode !== "") {
+        if (formData.workOrderCode !== "") {
+          setLoading(true);
+          const q = query(
+            collection(db, "workOrders"),
+            where(
+              "workOrderCode",
+              "==",
+              formData.workOrderCode.replace(/\s/g, "").toLocaleLowerCase("tr")
+            )
+          );
+          const querySnapshot = await getDocs(q);
+          let innerStored;
+          querySnapshot.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            innerStored = { ...doc.data(), id: doc.id };
+            setStoredWorkOrder({ ...doc.data(), id: doc.id });
+          });
+          if (innerStored.stories.length === 0) {
+            setFormData({ ...formData, operationNumber: "1" });
+          } else {
+            setFormData({
+              ...formData,
+              operationNumber: `${innerStored.stories.length + 1}`,
+            });
+          }
+          setLoading(false);
           setActivePage((prev) => prev + 1);
         } else {
           toast.error("Lütfen ürün kodunu seçin!", {
             position: "top-center",
           });
+          setLoading(false);
         }
         break;
       case 5:
@@ -404,24 +560,24 @@ function WorkerForm() {
     onChangeArray[index].amount = event.target.value;
     setFormData({ ...formData, fiberAmount: onChangeArray });
   }
-  const productColors = [
-    {
-      id: 1,
-      color: "mavi",
-    },
-    {
-      id: 2,
-      color: "kırmızı",
-    },
-    {
-      id: 3,
-      color: "siyah",
-    },
-    {
-      id: 4,
-      color: "beyaz",
-    },
-  ];
+  // const productColors = [
+  //   {
+  //     id: 1,
+  //     color: "mavi",
+  //   },
+  //   {
+  //     id: 2,
+  //     color: "kırmızı",
+  //   },
+  //   {
+  //     id: 3,
+  //     color: "siyah",
+  //   },
+  //   {
+  //     id: 4,
+  //     color: "beyaz",
+  //   },
+  // ];
   function handleProductAmountInputChange(event, index) {
     const onChangeArray = formData.productAmount;
     onChangeArray[index].amount = event.target.value;
@@ -449,7 +605,28 @@ function WorkerForm() {
       position: "top-center",
     });
   }
-
+  const productStock = [
+    {
+      id: "1237092391747910",
+      name: "bitmişüründeposu",
+      transactionPoint: "Bitmiş Ürün Deposu",
+      type: "Bitmiş Ürün Deposu",
+    },
+  ];
+  const transactionPointToReceiveForFiber = [
+    {
+      id: 1,
+      transactionPoint: "İp Deposu",
+    },
+  ];
+  const handlePageBack = () => {
+    if (activePage === 5) {
+      setFormData({ ...formData, transactionPointType: "" });
+    } else if (activePage === 6) {
+      setFormData({ ...formData, transactionPoint: "" });
+    }
+    setActivePage((prev) => prev - 1);
+  };
   return (
     <div className="flex flex-col w-full min-h-[calc(100dvh-10rem)] md:min-h-[500px] gap-3 max-w-[calc(100vw-5rem)] md:max-w-[600px]">
       <ProgressBar width={activePage * 16.6666666667} />
@@ -519,7 +696,7 @@ function WorkerForm() {
                         onChange={(event) =>
                           handleFiberInputChange(event, index)
                         }
-                        className="w-full border bg-transparent border-gray-100 dark:border-gray-600 rounded-lg flex gap-1 focus-within:border-black dark:focus-within:border-white outline-none p-3"
+                        className="w-full text-base border bg-transparent border-gray-100 dark:border-gray-600 rounded-lg flex gap-1 focus-within:border-black dark:focus-within:border-white outline-none p-3"
                       />
                       <Select
                         property="unit"
@@ -565,13 +742,24 @@ function WorkerForm() {
             <div className="flex flex-col gap-6">
               <p className="font-semibold text-lg">İşlem Noktası Tipi Seçin:</p>
               <div className="flex flex-col gap-3">
-                <ButtonSelect
-                  items={transactionPointTypes}
-                  property="transactionPointType"
-                  searchActive={false}
-                  formData={formData}
-                  setFormData={setFormData}
-                />
+                {formData.operationType === "Teslim Et" && (
+                  <ButtonSelect
+                    items={transactionPointTypesForFiberToDeliver}
+                    property="transactionPointType"
+                    searchActive={false}
+                    formData={formData}
+                    setFormData={setFormData}
+                  />
+                )}
+                {formData.operationType === "Teslim Al" && (
+                  <ButtonSelect
+                    items={transactionPointTypesForFiberToReceive}
+                    property="transactionPointType"
+                    searchActive={false}
+                    formData={formData}
+                    setFormData={setFormData}
+                  />
+                )}
               </div>
             </div>
           )}
@@ -580,13 +768,26 @@ function WorkerForm() {
             <div className="flex flex-col gap-6">
               <p className="font-semibold text-lg">İşlem Noktası Seçin:</p>
               <div className="flex flex-col gap-3">
-                <ButtonSelect
-                  items={transactionPoints}
-                  property="transactionPoint"
-                  searchActive={true}
-                  formData={formData}
-                  setFormData={setFormData}
-                />
+                {formData.transactionPointType === "Dokuma" && (
+                  <ButtonSelect
+                    items={subcontractors.filter(
+                      (item) => item.type === "Dokuma"
+                    )}
+                    property="transactionPoint"
+                    searchActive={true}
+                    formData={formData}
+                    setFormData={setFormData}
+                  />
+                )}
+                {formData.transactionPointType === "İp Deposu" && (
+                  <ButtonSelect
+                    items={transactionPointToReceiveForFiber}
+                    property="transactionPoint"
+                    searchActive={false}
+                    formData={formData}
+                    setFormData={setFormData}
+                  />
+                )}
               </div>
             </div>
           )}
@@ -609,7 +810,7 @@ function WorkerForm() {
                     <div key={index} className="flex flex-col gap-1 py-5">
                       <Select
                         property="color"
-                        items={productColors}
+                        items={colors}
                         formData={formData}
                         setFormData={setFormData}
                         title="Ürün rengini seçin"
@@ -625,7 +826,7 @@ function WorkerForm() {
                         onChange={(event) =>
                           handleProductAmountInputChange(event, index)
                         }
-                        className="w-full border bg-transparent border-gray-100 dark:border-gray-600 rounded-lg flex gap-1 focus-within:border-black dark:focus-within:border-white outline-none p-3"
+                        className="w-full text-base border bg-transparent border-gray-100 dark:border-gray-600 rounded-lg flex gap-1 focus-within:border-black dark:focus-within:border-white outline-none p-3"
                       />
                       <button
                         type="button"
@@ -676,13 +877,77 @@ function WorkerForm() {
             <div className="flex flex-col gap-6">
               <p className="font-semibold text-lg">İşlem Noktası Seçin:</p>
               <div className="flex flex-col gap-3">
-                <ButtonSelect
-                  items={transactionPoints}
-                  property="transactionPoint"
-                  searchActive={true}
-                  formData={formData}
-                  setFormData={setFormData}
-                />
+                {formData.transactionPointType === "Müşteri" && (
+                  <ButtonSelect
+                    items={customers}
+                    property="transactionPoint"
+                    searchActive={true}
+                    formData={formData}
+                    setFormData={setFormData}
+                  />
+                )}
+                {formData.transactionPointType === "Dokuma" && (
+                  <ButtonSelect
+                    items={subcontractors.filter(
+                      (item) => item.type === "Dokuma"
+                    )}
+                    property="transactionPoint"
+                    searchActive={true}
+                    formData={formData}
+                    setFormData={setFormData}
+                  />
+                )}
+                {formData.transactionPointType === "Yıkama" && (
+                  <ButtonSelect
+                    items={subcontractors.filter(
+                      (item) => item.type === "Yıkama"
+                    )}
+                    property="transactionPoint"
+                    searchActive={true}
+                    formData={formData}
+                    setFormData={setFormData}
+                  />
+                )}
+                {formData.transactionPointType === "Ütü" && (
+                  <ButtonSelect
+                    items={subcontractors.filter((item) => item.type === "Ütü")}
+                    property="transactionPoint"
+                    searchActive={true}
+                    formData={formData}
+                    setFormData={setFormData}
+                  />
+                )}
+                {formData.transactionPointType === "Konfeksiyon" && (
+                  <ButtonSelect
+                    items={subcontractors.filter(
+                      (item) => item.type === "Konfeksiyon"
+                    )}
+                    property="transactionPoint"
+                    searchActive={true}
+                    formData={formData}
+                    setFormData={setFormData}
+                  />
+                )}
+                {formData.transactionPointType === "Aksesuar" && (
+                  <ButtonSelect
+                    items={subcontractors.filter(
+                      (item) => item.type === "Aksesuar"
+                    )}
+                    property="transactionPoint"
+                    searchActive={true}
+                    formData={formData}
+                    setFormData={setFormData}
+                  />
+                )}
+                {formData.transactionPointType === "Bitmiş Ürün Deposu" && (
+                  <ButtonSelect
+                    items={productStock}
+                    property="transactionPoint"
+                    searchActive={false}
+                    formData={formData}
+                    setFormData={setFormData}
+                  />
+                )}
               </div>
             </div>
           )}
@@ -690,7 +955,7 @@ function WorkerForm() {
           {activePage !== 1 && (
             <button
               type="button"
-              onClick={() => setActivePage((prev) => prev - 1)}
+              onClick={handlePageBack}
               className="p-3 border border-gray-100 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg"
             >
               Geri
@@ -717,6 +982,11 @@ function WorkerForm() {
           )}
         </div>
       </form>
+      {loading && (
+        <div className="z-50 fixed inset-0 bg-white/5 flex justify-center items-center pointer-events-none">
+          <HashLoader size={60} color="#008000" />
+        </div>
+      )}
     </div>
   );
 }

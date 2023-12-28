@@ -9,12 +9,50 @@ import { useWorkTrackingContext } from "@/contexts/workTrackingContext";
 import { TagIcon, SwatchIcon, Battery0Icon } from "@heroicons/react/24/outline";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
+import {
+  collection,
+  query,
+  where,
+  onSnapshot,
+  getDocs,
+  doc,
+  setDoc,
+} from "firebase/firestore";
+import { db } from "@/firebase.config";
+import { HashLoader } from "react-spinners";
 
 export default function ActiveWorkOrders() {
   const { data: session } = useSession();
-  const { workOrders, selectedWorkOrder } = useWorkTrackingContext();
+  const { workOrders, selectedWorkOrder, setWorkOrders } =
+    useWorkTrackingContext();
+  useEffect(() => {
+    const getActiveWorkOrders = async () => {
+      const querySnapshot = await getDocs(collection(db, "workOrderLists"));
+      const workOrderLists = [];
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        workOrderLists.push({ ...doc.data(), id: doc.id });
+      });
+      const mergedArray = workOrderLists.flatMap((obj) => obj.arr);
+      setWorkOrders(mergedArray);
+    };
+    getActiveWorkOrders();
+
+    // const q = query(collection(db, "workOrders"), where("active", "==", true));
+    // const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    //   const activeWorkOrders = [];
+    //   querySnapshot.forEach((doc) => {
+    //     activeWorkOrders.push({ ...doc.data(), id: doc.id });
+    //   });
+    //   setWorkOrders(activeWorkOrders);
+    // });
+    // return () => {
+    //   unsubscribe();
+    // };
+  }, [setWorkOrders]);
   const completeWorkOrderModalRef = useRef(null);
+  const { globalLoading } = useWorkTrackingContext();
   return (
     <>
       <div className="flex-1 flex flex-col md:flex-row gap-6">
@@ -24,8 +62,15 @@ export default function ActiveWorkOrders() {
           />
         </div>
         {selectedWorkOrder ? (
-          <>
-            <div className="flex-[3] flex flex-col gap-6">
+          <div className="flex-[4] flex flex-col md:flex-row gap-6 relative">
+            {globalLoading && (
+              <div className="absolute inset-0 backdrop-blur-sm bg-white/5 z-40 flex justify-center items-center">
+                <div className="z-50">
+                  <HashLoader size={60} color="#008000" />
+                </div>
+              </div>
+            )}
+            <div className="flex-[3] flex flex-col gap-6 ">
               <div className="flex-[2] flex flex-col md:flex-row gap-6">
                 <div className="md:flex-1 h-[400px] md:h-auto w-full relative bg-white shadow-md rounded-lg dark:bg-arc_black">
                   {selectedWorkOrder?.image ? (
@@ -85,7 +130,7 @@ export default function ActiveWorkOrders() {
                   </div>
                   <div className="md:flex-[2] h-[300px] md:h-auto">
                     {selectedWorkOrder.targetAmount.length === 0 ? (
-                      <div className="h-full w-full flex justify-center items-center font-semibold bg-white shadow-md dark:bg-arc_black rounded-lg">
+                      <div className="h-full w-full flex text-center justify-center items-center font-semibold bg-white shadow-md dark:bg-arc_black rounded-lg">
                         Bu iş emri için herhangi bir hedef miktar belirlenmedi
                       </div>
                     ) : (
@@ -109,7 +154,7 @@ export default function ActiveWorkOrders() {
             <div className="md:flex-1 h-[800px] md:h-auto bg-white shadow-md rounded-lg dark:bg-arc_black">
               <WorkOrderDetails productType={selectedWorkOrder.productType} />
             </div>
-          </>
+          </div>
         ) : (
           <div className="flex-[5] flex items-center rounded-lg justify-center font-semibold bg-white shadow-md dark:bg-arc_black">
             {" "}

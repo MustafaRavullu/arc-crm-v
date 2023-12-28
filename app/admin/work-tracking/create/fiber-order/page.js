@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
   ChevronDownIcon,
@@ -12,25 +12,170 @@ import {
 import useWhenClickedOutside from "@/hooks/useWhenClickedOutside";
 import { useWorkTrackingContext } from "@/contexts/workTrackingContext";
 import Select from "@/components/Select";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  doc,
+  setDoc,
+} from "firebase/firestore";
+import { db, storage } from "@/firebase.config";
+import { toast } from "sonner";
+import { HashLoader } from "react-spinners";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 export default function FiberOrder() {
-  const handleSubmit = (event) => {
+  const [loading, setLoading] = useState(false);
+  const [image, setImage] = useState(null);
+  const createWorkOrder = async (url) => {
+    try {
+      await setDoc(doc(db, "workOrders", uuidv4()), {
+        workOrderCode: formData.workOrderCode,
+        productType: formData.productType,
+        customer: formData.customer,
+        image: url,
+        startedAt: new Date().toLocaleDateString("tr-TR"),
+        finishedAt: "",
+        active: true,
+        jobType: "normal",
+        targetAmount: formData.targetAmount,
+        stories: formData.stories,
+      });
+      // toast.success("İş emri başarıyla oluşturuldu.", {
+      //   position: "top-center",
+      // });
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
+    // setLoading(false);
+    setFormData({
+      workOrderCode: "", //bitti
+      productType: "ip", // otomtatik
+      customer: "", // select bitti
+      image: "", //bitti
+      startedAt: "", // otomatik
+      finishedAt: "", //otomatik
+      active: true, //otomatik
+      jobType: "normal", //otomatik
+      targetAmount: [
+        // select
+        {
+          id: uuidv4(),
+          code: "",
+          amount: "",
+          unit: "",
+        },
+      ],
+      stories: [],
+    });
+    setImage(null);
+  };
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    setLoading(true);
+    const q = query(
+      collection(db, "workOrders"),
+      where(
+        "workOrderCode",
+        "==",
+        formData.workOrderCode.replace(/\s/g, "").toLocaleLowerCase("tr")
+      )
+    );
+    let isWorkOrderExists;
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots
+      isWorkOrderExists = { ...doc.data(), id: doc.id };
+    });
+    if (isWorkOrderExists) {
+      toast.error("Hata: Bu iş emri kodu zaten var", {
+        position: "top-center",
+      });
+      setLoading(false);
+      return;
+    }
+    const imageRef = ref(storage, `images/${uuidv4()}`);
+    uploadBytes(imageRef, image)
+      .then((snapshot) => {
+        return getDownloadURL(snapshot.ref);
+      })
+      .then((url) => {
+        createWorkOrder(url);
+      });
+    const workOrderListQuerySnapshot = await getDocs(
+      collection(db, "workOrderLists")
+    );
+    let workOrderLists = [];
+    workOrderListQuerySnapshot.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots
+      workOrderLists.push({ ...doc.data(), id: doc.id });
+    });
+    if (workOrderLists[workOrderLists.length - 1].arr.length < 3) {
+      const docRef = doc(db, "workOrderLists", `${workOrderLists.length}`);
+      try {
+        await setDoc(
+          docRef,
+          {
+            arr: [
+              ...workOrderLists[workOrderLists.length - 1].arr,
+              {
+                workOrderCode: formData.workOrderCode,
+                productType: formData.productType,
+                active: formData.active,
+                jobType: formData.jobType,
+              },
+            ],
+          },
+          { merge: true }
+        );
+      } catch (error) {
+        console.log(error);
+      }
+      toast.success("İş emri başarıyla oluşturuldu.", {
+        position: "top-center",
+      });
+      setLoading(false);
+    } else {
+      const docRef = doc(db, "workOrderLists", `${workOrderLists.length + 1}`);
+      try {
+        await setDoc(
+          docRef,
+          {
+            arr: [
+              {
+                workOrderCode: formData.workOrderCode,
+                productType: formData.productType,
+                active: formData.active,
+                jobType: formData.jobType,
+              },
+            ],
+          },
+          { merge: true }
+        );
+      } catch (error) {
+        console.log(error);
+      }
+      toast.success("İş emri başarıyla oluşturuldu.", {
+        position: "top-center",
+      });
+      setLoading(false);
+    }
   };
   const [formData, setFormData] = useState({
-    id: uuidv4(),
     workOrderCode: "", //bitti
     productType: "ip", // otomtatik
     customer: "", // select bitti
-    image: null, //bitti
+    image: "", //bitti
     startedAt: "", // otomatik
-    finishedAt: "Devam ediyor", //otomatik
+    finishedAt: "", //otomatik
     active: true, //otomatik
     jobType: "normal", //otomatik
     targetAmount: [
       // select
       {
-        id: 1,
+        id: uuidv4(),
         code: "",
         amount: "",
         unit: "",
@@ -63,8 +208,14 @@ export default function FiberOrder() {
       ],
     });
   }
-  const { customers, fiberTypes, colors, fiberCodes } =
-    useWorkTrackingContext();
+  const {
+    customers,
+    fiberTypes,
+    colors,
+    fiberCodes,
+    setCustomers,
+    setFiberCodes,
+  } = useWorkTrackingContext();
   const units = [
     {
       id: 1,
@@ -75,6 +226,28 @@ export default function FiberOrder() {
       unit: "Ton",
     },
   ];
+  useEffect(() => {
+    const getListValues = async () => {
+      const querySnapshot = await getDocs(collection(db, "customers"));
+      const customerLists = [];
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        customerLists.push({ ...doc.data(), id: doc.id });
+      });
+      const mergedArray = customerLists.flatMap((obj) => obj.arr);
+      setCustomers(mergedArray);
+
+      const querySnapshot2 = await getDocs(collection(db, "fiberCodes"));
+      const fiberCodeLists = [];
+      querySnapshot2.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        fiberCodeLists.push({ ...doc.data(), id: doc.id });
+      });
+      const mergedArray2 = fiberCodeLists.flatMap((obj) => obj.arr);
+      setFiberCodes(mergedArray2);
+    };
+    getListValues();
+  }, []);
   return (
     <form
       onSubmit={handleSubmit}
@@ -97,13 +270,10 @@ export default function FiberOrder() {
             <legend className="font-bold">Adım 2(Zorunlu)</legend>
             <div className="flex flex-col gap-1">
               <div className="font-semibold">İş Emri Fotoğrafı</div>
-              {formData.image ? (
+              {image ? (
                 <div className="flex gap-2">
-                  {formData.image.name}{" "}
-                  <button
-                    type="button"
-                    onClick={() => setFormData({ ...formData, image: null })}
-                  >
+                  {image.name}{" "}
+                  <button type="button" onClick={() => setImage(null)}>
                     <TrashIcon className="w-5" />
                   </button>
                 </div>
@@ -117,12 +287,7 @@ export default function FiberOrder() {
                     type="file"
                     id="image-input"
                     className="hidden"
-                    onChange={(event) =>
-                      setFormData({
-                        ...formData,
-                        image: event.target.files?.[0],
-                      })
-                    }
+                    onChange={(event) => setImage(event.target.files[0])}
                   />
                 </label>
               )}
@@ -175,7 +340,7 @@ export default function FiberOrder() {
                         onChange={(event) =>
                           handleFiberInputChange(event, index)
                         }
-                        className="w-full border bg-transparent border-gray-100 dark:border-gray-600 rounded-lg flex gap-1 focus-within:border-black dark:focus-within:border-white outline-none p-3"
+                        className="w-full text-base border bg-transparent border-gray-100 dark:border-gray-600 rounded-lg flex gap-1 focus-within:border-black dark:focus-within:border-white outline-none p-3"
                       />
                       <Select
                         property="unit"
@@ -202,8 +367,24 @@ export default function FiberOrder() {
             </div>
           </div>
         </fieldset>
-        <button type="submit" className="simple_button">
-          İş Emrini Oluştur
+        <button
+          type="submit"
+          disabled={
+            loading ||
+            formData.workOrderCode === "" ||
+            image === null ||
+            formData.customer === "" ||
+            formData.targetAmount.some((fiberInfo) =>
+              Object.values(fiberInfo).some((value) => value === "")
+            )
+          }
+          className="simple_button flex justify-center disabled:opacity-50"
+        >
+          {loading ? (
+            <HashLoader size={20} color="#008000" />
+          ) : (
+            "İş Emrini Oluştur"
+          )}
         </button>
       </div>
     </form>
@@ -221,7 +402,7 @@ const Input = ({ label, type, placeholder, formData, setFormData, name }) => {
         onChange={(event) =>
           setFormData({ ...formData, [name]: event.target.value })
         }
-        className="p-3 bg-white dark:bg-arc_black border rounded-lg dark:border-white border-black outline-none"
+        className="p-3 bg-white text-base dark:bg-arc_black border rounded-lg dark:border-white border-black outline-none"
       />
     </div>
   );
@@ -265,16 +446,17 @@ const BasicSelect = ({ data, setFormData, formData, property, label }) => {
             placeholder="Ara"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            className="bg-white dark:bg-arc_black p-2.5 outline-none w-[170px]"
+            className="bg-white text-base dark:bg-arc_black p-2.5 outline-none w-[170px]"
           />
         </div>
-        {filteredData.map((item) => (
+        {filteredData.map((item, index) => (
           <button
-            key={item.id}
-            onClick={() => handleClick(item.name)}
+            key={index}
+            type="button"
+            onClick={() => handleClick(item.transactionPoint)}
             className="p-3 hover:bg-black rounded-lg hover:text-white dark:hover:bg-white dark:hover:text-black"
           >
-            {item.name}
+            {item.transactionPoint}
           </button>
         ))}
       </div>

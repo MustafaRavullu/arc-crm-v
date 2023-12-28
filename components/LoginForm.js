@@ -8,7 +8,7 @@ import { toast } from "sonner";
 export default function LoginForm() {
   const { data: session } = useSession();
   const [credentials, setCredentials] = useState({
-    email: "",
+    username: "",
     password: "",
   });
   const [loading, setLoading] = useState(false);
@@ -36,7 +36,7 @@ export default function LoginForm() {
       setError(false);
     }
     if (!res.ok) {
-      toast.error("E-posta ya da parolanız hatalı!", {
+      toast.error("Kullanıcı adı veya parolanız hatalı!", {
         position: "top-center",
       });
       setError(true);
@@ -54,12 +54,12 @@ export default function LoginForm() {
         <input
           type="text"
           disabled={loading}
-          value={credentials.email}
+          value={credentials.username}
           onChange={(event) =>
-            setCredentials({ ...credentials, email: event.target.value })
+            setCredentials({ ...credentials, username: event.target.value })
           }
-          placeholder="E-posta"
-          className={` w-full border border-arc_black rounded-md outline-none p-3  dark:border-white ${
+          placeholder="Kullanıcı Adı"
+          className={` w-full text-base border border-arc_black rounded-md outline-none p-3  dark:border-white ${
             loading
               ? "bg-gray-200 dark:bg-gray-700"
               : "bg-white dark:bg-arc_black"
@@ -73,7 +73,7 @@ export default function LoginForm() {
           onChange={(event) =>
             setCredentials({ ...credentials, password: event.target.value })
           }
-          className={` w-full border border-arc_black rounded-md outline-none p-3  dark:border-white ${
+          className={` w-full text-base border border-arc_black rounded-md outline-none p-3  dark:border-white ${
             loading
               ? "bg-gray-200 dark:bg-gray-700"
               : "bg-white dark:bg-arc_black"

@@ -19,7 +19,9 @@ export default function Card({
         <div>{icon}</div>
       </div>
       <div
-        className={`font-bold ${valueSize ? valueSize : "text-4xl"}`}
+        className={`font-bold break-words ${
+          valueSize ? valueSize : "text-4xl"
+        }`}
       >{`${value}`}</div>
       <div>{unit}</div>
     </div>

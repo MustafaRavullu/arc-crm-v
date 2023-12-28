@@ -40,12 +40,13 @@ export default function TransactionPointList({ data }) {
                   <ChatBubbleBottomCenterTextIcon className="w-5" />
                 </div>
               )}
-              {selectedWorkOrder.stories[selectedWorkOrder.stories.length - 1]
-                .transactionPointType === item.type && (
-                <div>
-                  <TruckIcon className="w-5" />
-                </div>
-              )}
+              {selectedWorkOrder.stories.length !== 0 &&
+                selectedWorkOrder.stories[selectedWorkOrder.stories.length - 1]
+                  .transactionPointType === item.type && (
+                  <div>
+                    <TruckIcon className="w-5" />
+                  </div>
+                )}
             </div>
           </button>
         ))}

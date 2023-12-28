@@ -1,5 +1,6 @@
 import BarGraph from "@/components/BarGraph";
 import Card from "@/components/Card";
+import { db } from "@/firebase.config";
 import {
   RocketLaunchIcon,
   BoltIcon,
@@ -9,7 +10,7 @@ import {
   Square3Stack3DIcon,
 } from "@heroicons/react/24/outline";
 
-export default function AdminDashboard() {
+export default async function AdminDashboard() {
   const cardInfos = [
     {
       id: 1,

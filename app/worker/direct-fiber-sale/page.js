@@ -8,6 +8,18 @@ import { toast } from "sonner";
 import Select from "@/components/Select";
 import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useSession } from "next-auth/react";
+import {
+  arrayUnion,
+  collection,
+  doc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
+import { db } from "@/firebase.config";
+import { useRouter } from "next/navigation";
+import { HashLoader } from "react-spinners";
 
 // {
 //   id: 1,
@@ -36,35 +48,97 @@ import { useSession } from "next-auth/react";
 
 function DirectFiberSale() {
   const { data: session } = useSession();
-  function handleSubmit(event) {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  async function handleSubmit(event) {
     event.preventDefault();
+    setLoading(true);
     if (formData.transactionPoint !== "") {
-      setFormData({
-        ...formData,
-        subcontractorFollower:
-          session?.user?.email.split("@")[0].charAt(0).toLocaleUpperCase("tr") +
-          session?.user?.email.split("@")[0].slice(1),
-        operationTime: new Date().toLocaleString("tr-TR"),
+      // setFormData({
+      //   ...formData,
+      //   subcontractorFollower:
+      //     session?.user?.username
+      //       .split("@")[0]
+      //       .charAt(0)
+      //       .toLocaleUpperCase("tr") +
+      //     session?.user?.username.split("@")[0].slice(1),
+      //   operationTime: new Date().toLocaleString("tr-TR"),
+      // });
+      const docRef = doc(db, "workOrders", storedWorkOrder.id);
+      await updateDoc(docRef, {
+        stories: arrayUnion({
+          id: formData.id,
+          operationType: formData.operationType,
+          subcontractorFollower:
+            session?.user?.username
+              .split("@")[0]
+              .charAt(0)
+              .toLocaleUpperCase("tr") +
+            session?.user?.username.split("@")[0].slice(1),
+          productType: "ip",
+          operationNumber: formData.operationNumber,
+          operationTime: new Date().toLocaleString("tr-TR"),
+          workOrderCode: formData.workOrderCode,
+          fiberAmount: formData.fiberAmount,
+          transactionPointType: formData.transactionPointType,
+          transactionPoint: formData.transactionPoint,
+        }),
       });
-
       setFormData(fiberTransferFormStruct);
       setActivePage(1);
+      setLoading(false);
       toast.success(
         "İşleminiz başarıyla gerçekleştirildi. Yeni işlem yapmak için hazırsınız.",
         { position: "top-center" }
       );
+      router.push("/worker");
       // form gönderme işlemi
     } else {
       toast.error("Lütfen işlem noktası seçin!", { position: "top-center" });
+      setLoading(false);
     }
   }
+  const [storedWorkOrder, setStoredWorkOrder] = useState(null);
+  useEffect(() => {
+    const getFiberAndWorkOrderCodesAndCustomers = async () => {
+      const querySnapshot = await getDocs(collection(db, "fiberCodes"));
+      const fiberCodeLists = [];
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        fiberCodeLists.push({ ...doc.data(), id: doc.id });
+      });
+      const mergedArray = fiberCodeLists.flatMap((obj) => obj.arr);
+      setFiberCodes(mergedArray);
+
+      const querySnapshot2 = await getDocs(collection(db, "workOrderLists"));
+      const workOrderCodeLists = [];
+      querySnapshot2.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        workOrderCodeLists.push({ ...doc.data(), id: doc.id });
+      });
+      const mergedArray2 = workOrderCodeLists.flatMap((obj) => obj.arr);
+      setProductCodes(
+        mergedArray2.filter(
+          (item) => item.productType === "ip" && item.active === true
+        )
+      );
+
+      const querySnapshot3 = await getDocs(collection(db, "customers"));
+      const customerLists = [];
+      querySnapshot3.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        customerLists.push({ ...doc.data(), id: doc.id });
+      });
+      const mergedArray3 = customerLists.flatMap((obj) => obj.arr);
+      setCustomers(mergedArray3);
+    };
+    getFiberAndWorkOrderCodesAndCustomers();
+  }, []);
   const productTransferFormStruct = {
     id: uuidv4(),
     operationType: "",
     productType: "ürün",
-    subcontractorFollower:
-      session?.user?.email.split("@")[0].charAt(0).toLocaleUpperCase("tr") +
-      session?.user?.email.split("@")[0].slice(1),
+    subcontractorFollower: "",
     operationNumber: "",
     operationTime: "",
     workOrderCode: "",
@@ -78,6 +152,7 @@ function DirectFiberSale() {
     transactionPointType: "",
     transactionPoint: "",
   };
+  const [customers, setCustomers] = useState([]);
   const fiberTransferFormStruct = {
     id: uuidv4(),
     operationType: "",
@@ -128,40 +203,41 @@ function DirectFiberSale() {
   });
   const [formData, setFormData] = useState(fiberTransferFormStruct);
   const [activePage, setActivePage] = useState(1);
-  const productCodes = [
-    {
-      id: 1,
-      workOrderCode: "1543-3-İade",
-    },
-    {
-      id: 2,
-      workOrderCode: "5294-1",
-    },
-    {
-      id: 3,
-      workOrderCode: "8462-2-Y.İşleme",
-    },
-    {
-      id: 4,
-      workOrderCode: "4839-1",
-    },
-    {
-      id: 5,
-      workOrderCode: "2831-2",
-    },
-    {
-      id: 6,
-      workOrderCode: "6548-2",
-    },
-    {
-      id: 7,
-      workOrderCode: "4698-7",
-    },
-    {
-      id: 8,
-      workOrderCode: "3154-8",
-    },
-  ];
+  const [productCodes, setProductCodes] = useState([]);
+  // const productCodes = [
+  //   {
+  //     id: 1,
+  //     workOrderCode: "1543-3-İade",
+  //   },
+  //   {
+  //     id: 2,
+  //     workOrderCode: "5294-1",
+  //   },
+  //   {
+  //     id: 3,
+  //     workOrderCode: "8462-2-Y.İşleme",
+  //   },
+  //   {
+  //     id: 4,
+  //     workOrderCode: "4839-1",
+  //   },
+  //   {
+  //     id: 5,
+  //     workOrderCode: "2831-2",
+  //   },
+  //   {
+  //     id: 6,
+  //     workOrderCode: "6548-2",
+  //   },
+  //   {
+  //     id: 7,
+  //     workOrderCode: "4698-7",
+  //   },
+  //   {
+  //     id: 8,
+  //     workOrderCode: "3154-8",
+  //   },
+  // ];
   const productTypes = [
     {
       id: 1,
@@ -170,6 +246,12 @@ function DirectFiberSale() {
     {
       id: 2,
       productType: "İp",
+    },
+  ];
+  const transactionPointToReceiveForFiber = [
+    {
+      id: 1,
+      transactionPoint: "İp Deposu",
     },
   ];
   const transactionPoints = [
@@ -186,22 +268,32 @@ function DirectFiberSale() {
       transactionPoint: "Veli Aksesuar",
     },
   ];
-  const fiberCodes = [
+  // const fiberCodes = [
+  //   {
+  //     id: 1,
+  //     code: "54654",
+  //   },
+  //   {
+  //     id: 2,
+  //     code: "47651",
+  //   },
+  //   {
+  //     id: 3,
+  //     code: "12345",
+  //   },
+  //   {
+  //     id: 4,
+  //     code: "98745",
+  //   },
+  // ];
+  const [fiberCodes, setFiberCodes] = useState([]);
+  const deliverTransactionPointTypeForFiber = [
+    { id: 1, transactionPointType: "Müşteri" },
+  ];
+  const receiveTransactionPointTypeForFiber = [
     {
       id: 1,
-      code: "54654",
-    },
-    {
-      id: 2,
-      code: "47651",
-    },
-    {
-      id: 3,
-      code: "12345",
-    },
-    {
-      id: 4,
-      code: "98745",
+      transactionPointType: "İp Deposu",
     },
   ];
   const transactionPointTypes =
@@ -213,10 +305,6 @@ function DirectFiberSale() {
           },
           {
             id: 2,
-            transactionPointType: "Dokuma",
-          },
-          {
-            id: 3,
             transactionPointType: "Müşteri",
           },
         ]
@@ -260,7 +348,7 @@ function DirectFiberSale() {
       operationType: "Teslim Et",
     },
   ];
-  function handlePageSkip(activePage) {
+  async function handlePageSkip(activePage) {
     switch (activePage) {
       case 1:
         if (formData.operationType !== "") {
@@ -316,7 +404,32 @@ function DirectFiberSale() {
         }
         break;
       case 3:
-        if (formData.productCode !== "") {
+        if (formData.workOrderCode !== "") {
+          setLoading(true);
+          const q = query(
+            collection(db, "workOrders"),
+            where(
+              "workOrderCode",
+              "==",
+              formData.workOrderCode.replace(/\s/g, "").toLocaleLowerCase("tr")
+            )
+          );
+          const querySnapshot = await getDocs(q);
+          let innerStored;
+          querySnapshot.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            innerStored = { ...doc.data(), id: doc.id };
+            setStoredWorkOrder({ ...doc.data(), id: doc.id });
+          });
+          if (innerStored.stories.length === 0) {
+            setFormData({ ...formData, operationNumber: "1" });
+          } else {
+            setFormData({
+              ...formData,
+              operationNumber: `${innerStored.stories.length + 1}`,
+            });
+          }
+          setLoading(false);
           setActivePage((prev) => prev + 1);
         } else {
           toast.error("Lütfen ürün kodunu seçin!", {
@@ -337,6 +450,14 @@ function DirectFiberSale() {
         break;
     }
   }
+  const handlePageBack = () => {
+    if (activePage === 4) {
+      setFormData({ ...formData, transactionPointType: "" });
+    } else if (activePage === 5) {
+      setFormData({ ...formData, transactionPoint: "" });
+    }
+    setActivePage((prev) => prev - 1);
+  };
   const fiberUnits = [
     { id: 1, unit: "Kg" },
     { id: 2, unit: "Ton" },
@@ -419,7 +540,7 @@ function DirectFiberSale() {
   return (
     <div className="flex-1 flex justify-center items-center">
       <div className="flex flex-col w-full min-h-[calc(100dvh-10rem)] md:min-h-[500px] gap-3 max-w-[calc(100vw-5rem)] md:max-w-[600px]">
-        <ProgressBar width={activePage * 16.6666666667} />
+        <ProgressBar width={activePage * 20} />
         <form
           onSubmit={handleSubmit}
           className="w-full justify-between flex-1 flex flex-col "
@@ -488,7 +609,7 @@ function DirectFiberSale() {
                           onChange={(event) =>
                             handleFiberInputChange(event, index)
                           }
-                          className="w-full border bg-transparent border-gray-100 dark:border-gray-600 rounded-lg flex gap-1 focus-within:border-black dark:focus-within:border-white outline-none p-3"
+                          className="w-full text-base border bg-transparent border-gray-100 dark:border-gray-600 rounded-lg flex gap-1 focus-within:border-black dark:focus-within:border-white outline-none p-3"
                         />
                         <Select
                           property="unit"
@@ -536,13 +657,24 @@ function DirectFiberSale() {
                   İşlem Noktası Tipi Seçin:
                 </p>
                 <div className="flex flex-col gap-3">
-                  <ButtonSelect
-                    items={transactionPointTypes}
-                    property="transactionPointType"
-                    searchActive={false}
-                    formData={formData}
-                    setFormData={setFormData}
-                  />
+                  {formData.operationType === "Teslim Et" && (
+                    <ButtonSelect
+                      items={deliverTransactionPointTypeForFiber}
+                      property="transactionPointType"
+                      searchActive={false}
+                      formData={formData}
+                      setFormData={setFormData}
+                    />
+                  )}
+                  {formData.operationType === "Teslim Al" && (
+                    <ButtonSelect
+                      items={receiveTransactionPointTypeForFiber}
+                      property="transactionPointType"
+                      searchActive={false}
+                      formData={formData}
+                      setFormData={setFormData}
+                    />
+                  )}
                 </div>
               </div>
             )}
@@ -551,13 +683,24 @@ function DirectFiberSale() {
               <div className="flex flex-col gap-6">
                 <p className="font-semibold text-lg">İşlem Noktası Seçin:</p>
                 <div className="flex flex-col gap-3">
-                  <ButtonSelect
-                    items={transactionPoints}
-                    property="transactionPoint"
-                    searchActive={true}
-                    formData={formData}
-                    setFormData={setFormData}
-                  />
+                  {formData.operationType === "Teslim Al" && (
+                    <ButtonSelect
+                      items={transactionPointToReceiveForFiber}
+                      property="transactionPoint"
+                      searchActive={false}
+                      formData={formData}
+                      setFormData={setFormData}
+                    />
+                  )}
+                  {formData.operationType === "Teslim Et" && (
+                    <ButtonSelect
+                      items={customers}
+                      property="transactionPoint"
+                      searchActive={true}
+                      formData={formData}
+                      setFormData={setFormData}
+                    />
+                  )}
                 </div>
               </div>
             )}
@@ -662,8 +805,8 @@ function DirectFiberSale() {
             {activePage !== 1 && (
               <button
                 type="button"
-                onClick={() => setActivePage((prev) => prev - 1)}
-                className="p-3 border border-gray-100 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg"
+                onClick={handlePageBack}
+                className="p-3 border flex justify-center border-gray-100 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg"
               >
                 Geri
               </button>
@@ -672,9 +815,9 @@ function DirectFiberSale() {
               <button
                 type="button"
                 onClick={() => handlePageSkip(activePage)}
-                className={` ${
+                className={`disabled:opacity-50 ${
                   activePage !== 5 && "col-start-2"
-                } p-3 bg-green-500 border border-green-500 hover:bg-green-600 hover:border-green-600 text-white rounded-lg`}
+                } p-3 bg-green-500 border flex justify-center border-green-500 hover:bg-green-600 hover:border-green-600 text-white rounded-lg`}
               >
                 İleri
               </button>
@@ -689,6 +832,11 @@ function DirectFiberSale() {
             )}
           </div>
         </form>
+        {loading && (
+          <div className="z-50 fixed inset-0 bg-white/5 flex justify-center items-center pointer-events-none">
+            <HashLoader size={60} color="#008000" />
+          </div>
+        )}
       </div>
     </div>
   );

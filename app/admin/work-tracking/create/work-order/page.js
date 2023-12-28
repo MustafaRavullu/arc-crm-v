@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
   ChevronDownIcon,
@@ -12,19 +12,198 @@ import {
 import useWhenClickedOutside from "@/hooks/useWhenClickedOutside";
 import { useWorkTrackingContext } from "@/contexts/workTrackingContext";
 import Select from "@/components/Select";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  doc,
+  setDoc,
+} from "firebase/firestore";
+import { db, storage } from "@/firebase.config";
+import { toast } from "sonner";
+import { HashLoader } from "react-spinners";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 export default function WorkOrder() {
-  const handleSubmit = (event) => {
+  const [loading, setLoading] = useState(false);
+  const [image, setImage] = useState(null);
+  const createWorkOrder = async (url) => {
+    try {
+      await setDoc(doc(db, "workOrders", uuidv4()), {
+        workOrderCode: formData.workOrderCode,
+        productType: formData.productType,
+        customer: formData.customer,
+        image: url,
+        startedAt: new Date().toLocaleDateString("tr-TR"),
+        finishedAt: "",
+        active: true,
+        jobType: "normal",
+        fiber: formData.fiber,
+        description: formData.description, // bitti
+        grammage: formData.grammage, // bitti
+        bedenBoy: formData.bedenBoy, // bitti
+        bedenEn: formData.bedenEn, // bitti
+        kolBoyu: formData.kolBoyu, // bitti
+        kolPazu: formData.kolPazu, // bitti
+        kolEni: formData.kolEni, // bitti
+        onYakaDusuklugu: formData.onYakaDusuklugu, // bitti
+        arkaYakaDusuklugu: formData.arkaYakaDusuklugu, // bitti
+        omuzDusuklugu: formData.omuzDusuklugu, // bitti
+        ense: formData.ense, // bitti
+        bedenOnBandGenisligi: formData.bedenOnBandGenisligi, // bitti
+        bedenOnBandUzunlugu: formData.bedenOnBandUzunlugu, // bitti
+        bedenLastikBoyu: formData.bedenLastikBoyu, // bitti
+        yakaYuksekligi: formData.yakaYuksekligi, // bitti
+        yakaEni: formData.yakaEni, // bitti
+        makinaNo: formData.makinaNo, // bitti
+        targetAmount: formData.targetAmount,
+        stories: formData.stories,
+      });
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
+    setFormData({
+      id: uuidv4(),
+      workOrderCode: "", //bitti
+      productType: "ürün", // otomtatik
+      customer: "", // select bitti
+      image: "", //bitti
+      startedAt: "", // otomatik
+      finishedAt: "", //otomatik
+      active: true, //otomatik
+      jobType: "normal", //otomatik
+      fiber: [], // select bitti
+      description: "", // bitti
+      grammage: "", // bitti
+      bedenBoy: "", // bitti
+      bedenEn: "", // bitti
+      kolBoyu: "", // bitti
+      kolPazu: "", // bitti
+      kolEni: "", // bitti
+      onYakaDusuklugu: "", // bitti
+      arkaYakaDusuklugu: "", // bitti
+      omuzDusuklugu: "", // bitti
+      ense: "", // bitti
+      bedenOnBandGenisligi: "", // bitti
+      bedenOnBandUzunlugu: "", // bitti
+      bedenLastikBoyu: "", // bitti
+      yakaYuksekligi: "", // bitti
+      yakaEni: "", // bitti
+      makinaNo: "", // bitti
+      targetAmount: [
+        // select
+        // {
+        //   id: 1,
+        //   color: "",
+        //   amount: "",
+        // },
+      ],
+      stories: [],
+    });
+    setImage(null);
+  };
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    setLoading(true);
+    const q = query(
+      collection(db, "workOrders"),
+      where(
+        "workOrderCode",
+        "==",
+        formData.workOrderCode.replace(/\s/g, "").toLocaleLowerCase("tr")
+      )
+    );
+    let isWorkOrderExists;
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots
+      isWorkOrderExists = { ...doc.data(), id: doc.id };
+    });
+    if (isWorkOrderExists) {
+      toast.error("Hata: Bu iş emri kodu zaten var", {
+        position: "top-center",
+      });
+      setLoading(false);
+      return;
+    }
+    const imageRef = ref(storage, `images/${uuidv4()}`);
+    uploadBytes(imageRef, image)
+      .then((snapshot) => {
+        return getDownloadURL(snapshot.ref);
+      })
+      .then((url) => {
+        createWorkOrder(url);
+      });
+    // iş emirlerinin filtre özelliklerini depoladığımız kısım
+    const workOrderListQuerySnapshot = await getDocs(
+      collection(db, "workOrderLists")
+    );
+    let workOrderLists = [];
+    workOrderListQuerySnapshot.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots
+      workOrderLists.push({ ...doc.data(), id: doc.id });
+    });
+    if (workOrderLists[workOrderLists.length - 1].arr.length < 3) {
+      const docRef = doc(db, "workOrderLists", `${workOrderLists.length}`);
+      try {
+        await setDoc(
+          docRef,
+          {
+            arr: [
+              ...workOrderLists[workOrderLists.length - 1].arr,
+              {
+                workOrderCode: formData.workOrderCode,
+                productType: formData.productType,
+                active: formData.active,
+                jobType: formData.jobType,
+              },
+            ],
+          },
+          { merge: true }
+        );
+      } catch (error) {
+        console.log(error);
+      }
+      toast.success("İş emri başarıyla oluşturuldu.", {
+        position: "top-center",
+      });
+      setLoading(false);
+    } else {
+      const docRef = doc(db, "workOrderLists", `${workOrderLists.length + 1}`);
+      try {
+        await setDoc(
+          docRef,
+          {
+            arr: [
+              {
+                workOrderCode: formData.workOrderCode,
+                productType: formData.productType,
+                active: formData.active,
+                jobType: formData.jobType,
+              },
+            ],
+          },
+          { merge: true }
+        );
+      } catch (error) {
+        console.log(error);
+      }
+      toast.success("İş emri başarıyla oluşturuldu.", {
+        position: "top-center",
+      });
+      setLoading(false);
+    }
   };
   const [formData, setFormData] = useState({
     id: uuidv4(),
     workOrderCode: "", //bitti
     productType: "ürün", // otomtatik
     customer: "", // select bitti
-    image: null, //bitti
+    image: "", //bitti
     startedAt: "", // otomatik
-    finishedAt: "Devam ediyor", //otomatik
+    finishedAt: "", //otomatik
     active: true, //otomatik
     jobType: "normal", //otomatik
     fiber: [], // select bitti
@@ -192,7 +371,44 @@ export default function WorkOrder() {
       ],
     });
   }
-  const { customers, fiberTypes, colors } = useWorkTrackingContext();
+  const {
+    customers,
+    fiberTypes,
+    colors,
+    setCustomers,
+    setFiberTypes,
+    setColors,
+  } = useWorkTrackingContext();
+  useEffect(() => {
+    const getListValues = async () => {
+      const querySnapshot = await getDocs(collection(db, "customers"));
+      const customerLists = [];
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        customerLists.push({ ...doc.data(), id: doc.id });
+      });
+      const mergedArray = customerLists.flatMap((obj) => obj.arr);
+      setCustomers(mergedArray);
+
+      const querySnapshot2 = await getDocs(collection(db, "fiberTypes"));
+      const fiberTypeLists = [];
+      querySnapshot2.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        fiberTypeLists.push({ ...doc.data(), id: doc.id });
+      });
+      setFiberTypes(fiberTypeLists);
+
+      const querySnapshot3 = await getDocs(collection(db, "colors"));
+      const colorLists = [];
+      querySnapshot3.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        colorLists.push({ ...doc.data(), id: doc.id });
+      });
+      const mergedArray3 = colorLists.flatMap((obj) => obj.arr);
+      setColors(mergedArray3);
+    };
+    getListValues();
+  }, []);
   return (
     <form
       onSubmit={handleSubmit}
@@ -215,13 +431,10 @@ export default function WorkOrder() {
             <legend className="font-bold">Adım 2(Zorunlu)</legend>
             <div className="flex flex-col gap-1">
               <div className="font-semibold">İş Emri Fotoğrafı</div>
-              {formData.image ? (
+              {image ? (
                 <div className="flex gap-2">
-                  {formData.image.name}{" "}
-                  <button
-                    type="button"
-                    onClick={() => setFormData({ ...formData, image: null })}
-                  >
+                  {image.name}{" "}
+                  <button type="button" onClick={() => setImage(null)}>
                     <TrashIcon className="w-5" />
                   </button>
                 </div>
@@ -235,12 +448,7 @@ export default function WorkOrder() {
                     type="file"
                     id="image-input"
                     className="hidden"
-                    onChange={(event) =>
-                      setFormData({
-                        ...formData,
-                        image: event.target.files?.[0],
-                      })
-                    }
+                    onChange={(event) => setImage(event.target.files[0])}
                   />
                 </label>
               )}
@@ -279,7 +487,7 @@ export default function WorkOrder() {
                 setFormData({ ...formData, description: event.target.value })
               }
               placeholder="İş emri açıklaması girin"
-              className="bg-white outline-none dark:bg-arc_black p-3 border border-arc_black dark:border-white rounded-lg"
+              className="bg-white text-base outline-none dark:bg-arc_black p-3 border border-arc_black dark:border-white rounded-lg"
             ></textarea>
           </div>
         </fieldset>
@@ -319,7 +527,7 @@ export default function WorkOrder() {
                         onChange={(event) =>
                           handleFiberInputChange(event, index)
                         }
-                        className="w-full border bg-transparent border-arc_black dark:border-white rounded-lg flex gap-1 focus-within:border-black dark:focus-within:border-white outline-none p-3"
+                        className="w-full text-base border bg-transparent border-arc_black dark:border-white rounded-lg flex gap-1 focus-within:border-black dark:focus-within:border-white outline-none p-3"
                       />
                       <button
                         type="button"
@@ -339,8 +547,21 @@ export default function WorkOrder() {
             <MultipleSelect formData={formData} setFormData={setFormData} />
           </fieldset>
         </div>
-        <button type="submit" className="simple_button w-full md:w-fit">
-          İş Emrini Oluştur
+        <button
+          type="submit"
+          disabled={
+            formData.workOrderCode === "" ||
+            image === null ||
+            formData.fiber.length === 0 ||
+            loading
+          }
+          className="simple_button w-full md:w-fit"
+        >
+          {loading ? (
+            <HashLoader size={20} color="#008000" />
+          ) : (
+            "İş Emrini Oluştur"
+          )}
         </button>
       </div>
     </form>
@@ -358,7 +579,7 @@ const Input = ({ label, type, placeholder, formData, setFormData, name }) => {
         onChange={(event) =>
           setFormData({ ...formData, [name]: event.target.value })
         }
-        className="p-3 bg-white dark:bg-arc_black border rounded-lg dark:border-white border-black outline-none"
+        className="p-3 text-base bg-white dark:bg-arc_black border rounded-lg dark:border-white border-black outline-none"
       />
     </div>
   );
@@ -402,16 +623,17 @@ const BasicSelect = ({ data, setFormData, formData, property, label }) => {
             placeholder="Ara"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            className="bg-arc_black dark:bg-white p-2.5 outline-none w-[170px]"
+            className="bg-arc_black text-base dark:bg-white p-2.5 outline-none w-[170px]"
           />
         </div>
-        {filteredData.map((item) => (
+        {filteredData.map((item, index) => (
           <button
-            key={item.id}
-            onClick={() => handleClick(item.name)}
+            key={index}
+            type="button"
+            onClick={() => handleClick(item.transactionPoint)}
             className="p-3 hover:bg-black rounded-lg hover:text-white dark:hover:bg-white dark:hover:text-black"
           >
-            {item.name}
+            {item.transactionPoint}
           </button>
         ))}
       </div>
@@ -440,7 +662,7 @@ const MultipleSelect = ({ setFormData, formData }) => {
             placeholder="Ara"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            className="bg-white dark:bg-arc_black p-2.5 outline-none w-[170px]"
+            className="bg-white text-base dark:bg-arc_black p-2.5 outline-none w-[170px]"
           />
         </div>
         <div className="flex-1 relative">
@@ -448,6 +670,7 @@ const MultipleSelect = ({ setFormData, formData }) => {
             {filteredData.map((item) => (
               <button
                 key={item.id}
+                type="button"
                 onClick={() => {
                   setFormData({
                     ...formData,
@@ -461,10 +684,11 @@ const MultipleSelect = ({ setFormData, formData }) => {
                   "bg-black text-white dark:bg-white dark:text-black"
                 }`}
               >
-                {item.name}
+                {item.displayName}
                 {formData.fiber.includes(item.name) && (
                   <XCircleIcon
                     className="w-5"
+                    type="button"
                     onClick={(event) => {
                       event.stopPropagation();
                       setFormData({

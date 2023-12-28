@@ -284,7 +284,7 @@ export default function WorkOrder() {
                 setFormData({ ...formData, description: event.target.value })
               }
               placeholder="İş emri açıklaması girin"
-              className="bg-white outline-none dark:bg-arc_black p-3 border border-arc_black dark:border-white rounded-lg"
+              className="bg-white text-base outline-none dark:bg-arc_black p-3 border border-arc_black dark:border-white rounded-lg"
             ></textarea>
           </div>
         </fieldset>
@@ -324,7 +324,7 @@ export default function WorkOrder() {
                         onChange={(event) =>
                           handleFiberInputChange(event, index)
                         }
-                        className="w-full border bg-transparent border-arc_black dark:border-white rounded-lg flex gap-1 focus-within:border-black dark:focus-within:border-white outline-none p-3"
+                        className="w-full text-base border bg-transparent border-arc_black dark:border-white rounded-lg flex gap-1 focus-within:border-black dark:focus-within:border-white outline-none p-3"
                       />
                       <button
                         type="button"
@@ -364,7 +364,7 @@ const Input = ({ label, type, placeholder, formData, setFormData, name }) => {
         onChange={(event) =>
           setFormData({ ...formData, [name]: event.target.value })
         }
-        className="p-3 bg-white dark:bg-arc_black border rounded-lg dark:border-white border-black outline-none"
+        className="p-3 text-base bg-white dark:bg-arc_black border rounded-lg dark:border-white border-black outline-none"
       />
     </div>
   );
@@ -408,7 +408,7 @@ const BasicSelect = ({ data, setFormData, formData, property, label }) => {
             placeholder="Ara"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            className="bg-white dark:bg-arc_black p-2.5 outline-none w-[170px]"
+            className="bg-white text-base dark:bg-arc_black p-2.5 outline-none w-[170px]"
           />
         </div>
         {filteredData.map((item) => (
@@ -436,7 +436,7 @@ const MultipleSelect = ({ setFormData, formData }) => {
       <label htmlFor="" className="font-semibold">
         İplik Türü
       </label>
-      <div className="h-[210px] rounded-lg bg-white shadow-md dark:bg-arc_black p-3 flex flex-col gap-2">
+      <div className="h-[210px] rounded-lg bg-white  dark:bg-arc_black p-3 flex flex-col gap-2">
         <div className="flex border-b items-center border-black dark:border-white">
           <div className="pl-2.5">
             <MagnifyingGlassIcon className="w-5 " />
@@ -446,7 +446,7 @@ const MultipleSelect = ({ setFormData, formData }) => {
             placeholder="Ara"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            className="bg-white dark:bg-arc_black p-2.5 outline-none w-[170px]"
+            className="bg-white text-base dark:bg-arc_black p-2.5 outline-none w-[170px]"
           />
         </div>
         <div className="flex-1 relative">
@@ -532,7 +532,7 @@ const JustSelect = ({ data, setFormData, formData, property, label }) => {
             placeholder="Ara"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            className="bg-white dark:bg-arc_black p-2.5 outline-none w-[170px]"
+            className="bg-white text-base dark:bg-arc_black p-2.5 outline-none w-[170px]"
           />
         </div>
         {filteredData.map((item) => (

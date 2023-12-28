@@ -179,7 +179,7 @@ export default function FiberOrder() {
                         onChange={(event) =>
                           handleFiberInputChange(event, index)
                         }
-                        className="w-full border bg-transparent border-gray-100 dark:border-gray-600 rounded-lg flex gap-1 focus-within:border-black dark:focus-within:border-white outline-none p-3"
+                        className="w-full text-base border bg-transparent border-gray-100 dark:border-gray-600 rounded-lg flex gap-1 focus-within:border-black dark:focus-within:border-white outline-none p-3"
                       />
                       <Select
                         property="unit"
@@ -269,7 +269,7 @@ const BasicSelect = ({ data, setFormData, formData, property, label }) => {
             placeholder="Ara"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            className="bg-white dark:bg-arc_black p-2.5 outline-none w-[170px]"
+            className="bg-white text-base dark:bg-arc_black p-2.5 outline-none w-[170px]"
           />
         </div>
         {filteredData.map((item) => (
@@ -393,7 +393,7 @@ const JustSelect = ({ data, setFormData, formData, property, label }) => {
             placeholder="Ara"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            className="bg-white dark:bg-arc_black p-2.5 outline-none w-[170px]"
+            className="bg-white text-base dark:bg-arc_black p-2.5 outline-none w-[170px]"
           />
         </div>
         {filteredData.map((item) => (

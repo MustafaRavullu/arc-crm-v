@@ -1,13 +1,15 @@
 "use client";
 
 import { useWorkTrackingContext } from "@/contexts/workTrackingContext";
+import { db } from "@/firebase.config";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { collection, query, where, getDoc, getDocs } from "firebase/firestore";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 export default function WorkOrderList({ data }) {
   const pathname = usePathname();
-  const [query, setQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [filterParams, setFilterParams] = useState({
     productType: "ürün",
     jobType: "normal",
@@ -37,13 +39,35 @@ export default function WorkOrderList({ data }) {
       value: "iade",
     },
   ];
-  const firstFilter = data.filter((item) => item.workOrderCode.includes(query));
+  const firstFilter = data.filter((item) =>
+    item.workOrderCode.includes(searchQuery)
+  );
   const secondFilter = firstFilter.filter(
     (item) => item.productType === filterParams.productType
   );
   const thirdFilter = secondFilter.filter(
     (item) => item.jobType === filterParams.jobType
   );
+  const handleSelectWorkOrder = async (code) => {
+    // setSelectedWorkOrder(
+    //   data.find((x) => x.workOrderCode === item.workOrderCode)
+    // )
+    setGlobalLoading(true);
+    const q = query(
+      collection(db, "workOrders"),
+      where(
+        "workOrderCode",
+        "==",
+        code.replace(/\s/g, "").toLocaleLowerCase("tr")
+      )
+    );
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      setSelectedWorkOrder({ ...doc.data(), id: doc.id });
+    });
+    setGlobalLoading(false);
+  };
+  const { setGlobalLoading } = useWorkTrackingContext();
   return (
     <div className="min-h-[400px] md:min-h-full flex flex-col gap-6 p-6">
       {/* Başlık */}
@@ -62,9 +86,9 @@ export default function WorkOrderList({ data }) {
         <input
           type="text"
           placeholder="Ara"
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          className="bg-white outline-none p-3 w-full dark:bg-arc_black"
+          value={searchQuery}
+          onChange={(event) => setSearchQuery(event.target.value)}
+          className="bg-white text-base outline-none p-3 w-full dark:bg-arc_black"
         />
       </div>
       {/* Filtreler */}
@@ -104,14 +128,10 @@ export default function WorkOrderList({ data }) {
       <div className="flex-1 relative">
         <div className="absolute inset-0 overflow-auto flex flex-col gap-3">
           {thirdFilter.length > 0
-            ? thirdFilter.map((item) => (
+            ? thirdFilter.map((item, index) => (
                 <button
-                  key={item.id}
-                  onClick={() =>
-                    setSelectedWorkOrder(
-                      data.find((x) => x.workOrderCode === item.workOrderCode)
-                    )
-                  }
+                  key={index}
+                  onClick={() => handleSelectWorkOrder(item.workOrderCode)}
                   className={`p-3 rounded-lg font-bold text-base ${
                     selectedWorkOrder &&
                     item.workOrderCode === selectedWorkOrder.workOrderCode

@@ -29,7 +29,7 @@ function ButtonSelect({
             placeholder="Ara"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            className="bg-transparent outline-none w-full rounded-lg p-3"
+            className="bg-transparent text-base outline-none w-full rounded-lg p-3"
           />
           {query && (
             <button
@@ -44,10 +44,10 @@ function ButtonSelect({
       )}
       <div className="flex flex-col gap-3">
         {filteredItems.length ? (
-          filteredItems.map((item) => (
+          filteredItems.map((item, index) => (
             <input
               type="button"
-              key={item.id}
+              key={index}
               onClick={handleOptionClick}
               value={item[property]}
               className={`w-full p-3 border  rounded-lg ${

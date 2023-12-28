@@ -1,10 +1,15 @@
 "use client";
 
 import useWhenClickedOutside from "@/hooks/useWhenClickedOutside";
-import { useState } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function Dropdown({ children, buttonContent, marginTop }) {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
   const ref = useWhenClickedOutside(() => setIsOpen(false));
   return (
     <div className="relative z-40" ref={ref}>
