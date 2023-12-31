@@ -141,7 +141,7 @@ export default function SubcontractorFollower() {
         <div className="p-6 flex flex-col gap-6 border-arc_black rounded-lg dark:border-white bg-white dark:bg-arc_black">
           <div>
             İşleme devam etmek istiyorsanız aşağıdaki bilgileri saklayın ve
-            {"Oluştur"} butonuna basın.
+            {" 'Oluştur'"} butonuna basın.
           </div>{" "}
           <div className="flex flex-col gap-4">
             <div className="flex justify-between items-center font-semibold">

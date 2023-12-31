@@ -555,7 +555,7 @@ export default function WorkOrder() {
             formData.fiber.length === 0 ||
             loading
           }
-          className="simple_button w-full md:w-fit"
+          className="simple_button z-50 flex justify-center w-full md:w-fit"
         >
           {loading ? (
             <HashLoader size={20} color="#008000" />
@@ -610,7 +610,7 @@ const BasicSelect = ({ data, setFormData, formData, property, label }) => {
         <ChevronDownIcon className="w-5" />
       </button>
       <div
-        className={`z-10 absolute flex max-h-[200px] overflow-auto flex-col gap-2 top-full right-0 left-0 rounded-lg bg-arc_black shadow-md dark:bg-white text-white dark:text-black ${
+        className={`z-10 absolute flex  flex-col  top-full right-0 left-0 rounded-lg bg-arc_black shadow-md dark:bg-white text-white dark:text-black ${
           isOpen ? "block" : "hidden"
         }`}
       >
@@ -626,16 +626,18 @@ const BasicSelect = ({ data, setFormData, formData, property, label }) => {
             className="bg-arc_black text-base dark:bg-white p-2.5 outline-none w-[170px]"
           />
         </div>
-        {filteredData.map((item, index) => (
-          <button
-            key={index}
-            type="button"
-            onClick={() => handleClick(item.transactionPoint)}
-            className="p-3 hover:bg-black rounded-lg hover:text-white dark:hover:bg-white dark:hover:text-black"
-          >
-            {item.transactionPoint}
-          </button>
-        ))}
+        <div className="h-[200px] overflow-auto flex flex-col gap-2">
+          {filteredData.map((item, index) => (
+            <button
+              key={index}
+              type="button"
+              onClick={() => handleClick(item.transactionPoint)}
+              className="p-3 hover:bg-white rounded-lg hover:text-black dark:hover:bg-black dark:hover:text-white"
+            >
+              {item.transactionPoint}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -666,7 +668,7 @@ const MultipleSelect = ({ setFormData, formData }) => {
           />
         </div>
         <div className="flex-1 relative">
-          <div className="absolute overflow-auto h-[200px]  inset-0 flex flex-col gap-2">
+          <div className="absolute overflow-auto h-[140px] md:h-[200px]  inset-0 flex flex-col gap-2">
             {filteredData.map((item) => (
               <button
                 key={item.id}

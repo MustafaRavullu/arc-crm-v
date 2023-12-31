@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
   ChevronDownIcon,
@@ -12,10 +12,130 @@ import {
 import useWhenClickedOutside from "@/hooks/useWhenClickedOutside";
 import { useWorkTrackingContext } from "@/contexts/workTrackingContext";
 import Select from "@/components/Select";
+import {
+  collection,
+  doc,
+  getDocs,
+  query,
+  setDoc,
+  where,
+} from "firebase/firestore";
+import { db } from "@/firebase.config";
+import { toast } from "sonner";
+import { HashLoader } from "react-spinners";
 
 export default function ReturnFiberOrder() {
-  const handleSubmit = (event) => {
+  const [loading, setLoading] = useState(false);
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    setLoading(true);
+    const q = query(
+      collection(db, "workOrders"),
+      where("workOrderCode", "==", `${formData.workOrderCode}-i`)
+    );
+    let isWorkOrderExists;
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots
+      isWorkOrderExists = { ...doc.data(), id: doc.id };
+    });
+    if (isWorkOrderExists) {
+      toast.error("Hata: Bu iş emri kodu zaten var", {
+        position: "top-center",
+      });
+      setLoading(false);
+      return;
+    }
+    await setDoc(doc(db, "workOrders", uuidv4()), {
+      workOrderCode: `${formData.workOrderCode}-i`,
+      productType: formData.productType,
+      customer: formData.customer,
+      image: formData.image,
+      startedAt: new Date().toLocaleDateString("tr-TR"),
+      finishedAt: "",
+      active: true,
+      jobType: "iade",
+      targetAmount: formData.targetAmount,
+      stories: [],
+    });
+    const workOrderListQuerySnapshot = await getDocs(
+      collection(db, "workOrderLists")
+    );
+    let workOrderLists = [];
+    workOrderListQuerySnapshot.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots
+      workOrderLists.push({ ...doc.data(), id: doc.id });
+    });
+    if (workOrderLists[workOrderLists.length - 1].arr.length < 3) {
+      const docRef = doc(db, "workOrderLists", `${workOrderLists.length}`);
+      try {
+        await setDoc(
+          docRef,
+          {
+            arr: [
+              ...workOrderLists[workOrderLists.length - 1].arr,
+              {
+                workOrderCode: `${formData.workOrderCode}-i`,
+                productType: formData.productType,
+                active: true,
+                jobType: "iade",
+              },
+            ],
+          },
+          { merge: true }
+        );
+      } catch (error) {
+        console.log(error);
+      }
+      toast.success("İş emri başarıyla oluşturuldu.", {
+        position: "top-center",
+      });
+      setLoading(false);
+    } else {
+      const docRef = doc(db, "workOrderLists", `${workOrderLists.length + 1}`);
+      try {
+        await setDoc(
+          docRef,
+          {
+            arr: [
+              {
+                workOrderCode: `${formData.workOrderCode}-i`,
+                productType: formData.productType,
+                active: true,
+                jobType: "iade",
+              },
+            ],
+          },
+          { merge: true }
+        );
+      } catch (error) {
+        console.log(error);
+      }
+      toast.success("İş emri başarıyla oluşturuldu.", {
+        position: "top-center",
+      });
+      setLoading(false);
+    }
+    setFormData({
+      workOrderCode: "", //bitti
+      productType: "ip", // otomtatik
+      customer: "", // select bitti
+      image: "", //bitti
+      startedAt: "", // otomatik
+      finishedAt: "", //otomatik
+      active: true, //otomatik
+      jobType: "normal", //otomatik
+      targetAmount: [
+        // select
+        {
+          id: uuidv4(),
+          code: "",
+          amount: "",
+          unit: "",
+        },
+      ],
+      stories: [],
+    });
   };
   const [formData, setFormData] = useState({
     id: uuidv4(),
@@ -38,7 +158,45 @@ export default function ReturnFiberOrder() {
     ],
     stories: [],
   });
+  useEffect(() => {
+    const getActiveWorkOrders = async () => {
+      const querySnapshot = await getDocs(collection(db, "workOrderLists"));
+      const workOrderLists = [];
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        workOrderLists.push({ ...doc.data(), id: doc.id });
+      });
+      const mergedArray = workOrderLists.flatMap((obj) => obj.arr);
+      setWorkOrders(mergedArray);
 
+      const querySnapshot2 = await getDocs(collection(db, "fiberTypes"));
+      const fiberTypeLists = [];
+      querySnapshot2.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        fiberTypeLists.push({ ...doc.data(), id: doc.id });
+      });
+      setFiberTypes(fiberTypeLists);
+
+      const querySnapshot3 = await getDocs(collection(db, "fiberCodes"));
+      const fiberCodeLists = [];
+      querySnapshot3.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        fiberCodeLists.push({ ...doc.data(), id: doc.id });
+      });
+      const mergedArray3 = fiberCodeLists.flatMap((obj) => obj.arr);
+      setFiberCodes(mergedArray3);
+
+      const querySnapshot4 = await getDocs(collection(db, "customers"));
+      const customerLists = [];
+      querySnapshot4.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        customerLists.push({ ...doc.data(), id: doc.id });
+      });
+      const mergedArray4 = customerLists.flatMap((obj) => obj.arr);
+      setCustomers(mergedArray4);
+    };
+    getActiveWorkOrders();
+  }, []);
   function handleFiberInputChange(event, index) {
     const onChangeArray = formData.targetAmount;
     onChangeArray[index].amount = event.target.value;
@@ -63,8 +221,17 @@ export default function ReturnFiberOrder() {
       ],
     });
   }
-  const { customers, fiberTypes, colors, fiberCodes, workOrders } =
-    useWorkTrackingContext();
+  const {
+    customers,
+    fiberTypes,
+    colors,
+    fiberCodes,
+    workOrders,
+    setWorkOrders,
+    setCustomers,
+    setFiberTypes,
+    setFiberCodes,
+  } = useWorkTrackingContext();
   const units = [
     {
       id: 1,
@@ -87,9 +254,8 @@ export default function ReturnFiberOrder() {
             <JustSelect
               data={workOrders.filter(
                 (item) =>
-                  item.jobType.toLocaleLowerCase("tr") !== "iade" &&
                   item.productType.toLocaleLowerCase("tr") !== "ürün" &&
-                  item.active === true
+                  item.active === false
               )}
               setFormData={setFormData}
               formData={formData}
@@ -97,7 +263,7 @@ export default function ReturnFiberOrder() {
               label={"İş Emri"}
             />
           </fieldset>
-          <fieldset className="border border-black dark:border-white p-2 w-full md:flex-1    rounded-lg">
+          {/* <fieldset className="border border-black dark:border-white p-2 w-full md:flex-1    rounded-lg">
             <legend className="font-bold">Adım 2(Zorunlu)</legend>
             <div className="flex flex-col gap-1">
               <div className="font-semibold">İş Emri Fotoğrafı</div>
@@ -131,9 +297,9 @@ export default function ReturnFiberOrder() {
                 </label>
               )}
             </div>
-          </fieldset>
+          </fieldset> */}
           <fieldset className="border border-black dark:border-white p-2 w-full md:flex-1    rounded-lg">
-            <legend className="font-bold">Adım 3(Zorunlu)</legend>
+            <legend className="font-bold">Adım 2(Zorunlu)</legend>
             <BasicSelect
               data={customers}
               setFormData={setFormData}
@@ -145,7 +311,7 @@ export default function ReturnFiberOrder() {
         </div>
 
         <fieldset className="md:flex md:flex-col md:w-fit md:gap-3 border border-black dark:border-white p-2 w-full  rounded-lg">
-          <legend className="font-bold">Adım 4(Zorunlu)</legend>
+          <legend className="font-bold">Adım 3(Zorunlu)</legend>
           <div className=" relative md:w-[500px] h-[400px]">
             <div className="h-full flex flex-col gap-2">
               <div className="font-semibold">Miktar</div>
@@ -206,8 +372,24 @@ export default function ReturnFiberOrder() {
             </div>
           </div>
         </fieldset>
-        <button type="submit" className="simple_button w-full md:w-fit">
-          İş Emrini Oluştur
+        <button
+          type="submit"
+          disabled={
+            loading ||
+            formData.workOrderCode === "" ||
+            formData.customer === "" ||
+            formData.targetAmount.some((fiberInfo) =>
+              Object.values(fiberInfo).some((value) => value === "")
+            ) ||
+            formData.targetAmount.length === 0
+          }
+          className="simple_button disabled:opacity-50 z-50 w-full md:w-fit"
+        >
+          {loading ? (
+            <HashLoader size={20} color="#008000" />
+          ) : (
+            "İş Emrini Oluştur"
+          )}
         </button>
       </div>
     </form>
@@ -256,11 +438,11 @@ const BasicSelect = ({ data, setFormData, formData, property, label }) => {
         <ChevronDownIcon className="w-5" />
       </button>
       <div
-        className={`z-50 absolute flex flex-col gap-2 top-full right-0 left-0 rounded-lg bg-white shadow-md dark:bg-arc_black ${
+        className={`z-50 absolute flex flex-col top-full right-0 left-0 rounded-lg bg-arc_black shadow-md text-white dark:text-black dark:bg-white ${
           isOpen ? "block" : "hidden"
         }`}
       >
-        <div className="flex border-b items-center border-black dark:border-white">
+        <div className="flex border-b items-center border-white dark:border-black">
           <div className="pl-2.5">
             <MagnifyingGlassIcon className="w-5 " />
           </div>
@@ -269,18 +451,21 @@ const BasicSelect = ({ data, setFormData, formData, property, label }) => {
             placeholder="Ara"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            className="bg-white text-base dark:bg-arc_black p-2.5 outline-none w-[170px]"
+            className="bg-arc_black text-base dark:bg-white p-2.5 outline-none w-[170px]"
           />
         </div>
-        {filteredData.map((item) => (
-          <button
-            key={item.id}
-            onClick={() => handleClick(item.name)}
-            className="p-3 hover:bg-black rounded-lg hover:text-white dark:hover:bg-white dark:hover:text-black"
-          >
-            {item.name}
-          </button>
-        ))}
+        <div className="flex flex-col gap-2 h-[200px] overflow-auto">
+          {filteredData.map((item, index) => (
+            <button
+              key={index}
+              type="button"
+              onClick={() => handleClick(item.transactionPoint)}
+              className="p-3 hover:bg-white rounded-lg hover:text-black dark:hover:bg-arc_black dark:hover:text-white"
+            >
+              {item.transactionPoint}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -313,9 +498,10 @@ const MultipleSelect = ({ setFormData, formData }) => {
         </div>
         <div className="flex-1 relative">
           <div className="absolute overflow-auto inset-0 flex flex-col gap-2">
-            {filteredData.map((item) => (
+            {filteredData.map((item, index) => (
               <button
-                key={item.id}
+                key={index}
+                type="button"
                 onClick={() => {
                   setFormData({
                     ...formData,
@@ -356,14 +542,21 @@ const MultipleSelect = ({ setFormData, formData }) => {
 const JustSelect = ({ data, setFormData, formData, property, label }) => {
   const [isOpen, setIsOpen] = useState(false);
   const ref = useWhenClickedOutside(() => setIsOpen(false));
-  const [query, setQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const filteredData = data.filter((item) =>
     item.workOrderCode
       .toLocaleLowerCase("tr")
-      .includes(query.toLocaleLowerCase("tr"))
+      .includes(searchQuery.toLocaleLowerCase("tr"))
   );
-  const handleClick = (name) => {
-    setFormData(name);
+  const handleClick = async (item) => {
+    const q = query(
+      collection(db, "workOrders"),
+      where("workOrderCode", "==", item.workOrderCode)
+    );
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      setFormData({ ...doc.data(), id: doc.id });
+    });
     setIsOpen(false);
   };
   return (
@@ -380,31 +573,34 @@ const JustSelect = ({ data, setFormData, formData, property, label }) => {
         <ChevronDownIcon className="w-5" />
       </button>
       <div
-        className={`z-50 absolute flex flex-col gap-2 top-full right-0 left-0 rounded-lg bg-white shadow-md dark:bg-arc_black ${
+        className={`z-50 absolute flex flex-col top-full right-0 left-0 rounded-lg bg-arc_black shadow-md text-white dark:text-black dark:bg-white ${
           isOpen ? "block" : "hidden"
         }`}
       >
-        <div className="flex border-b items-center border-black dark:border-white">
+        <div className="flex border-b items-center border-white dark:border-arc_black">
           <div className="pl-2.5">
             <MagnifyingGlassIcon className="w-5 " />
           </div>
           <input
             type="text"
             placeholder="Ara"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            className="bg-white text-base dark:bg-arc_black p-2.5 outline-none w-[170px]"
+            value={searchQuery}
+            onChange={(event) => setSearchQuery(event.target.value)}
+            className="bg-arc_black text-base dark:bg-white p-2.5 outline-none w-[170px]"
           />
         </div>
-        {filteredData.map((item) => (
-          <button
-            key={item.id}
-            onClick={() => handleClick(item)}
-            className="p-3 hover:bg-black rounded-lg hover:text-white dark:hover:bg-white dark:hover:text-black"
-          >
-            {item.workOrderCode}
-          </button>
-        ))}
+        <div className="h-[200px] overflow-auto flex flex-col gap-2">
+          {filteredData.map((item, index) => (
+            <button
+              key={index}
+              type="button"
+              onClick={() => handleClick(item)}
+              className="p-3 hover:bg-white rounded-lg hover:text-black dark:hover:bg-arc_black dark:hover:text-white"
+            >
+              {item.workOrderCode}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );

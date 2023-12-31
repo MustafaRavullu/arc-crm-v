@@ -188,7 +188,6 @@ function WorkerForm() {
         });
       }
       setProductTypeSelect({ productType: "" });
-      setActivePage(1);
       toast.success(
         "İşleminiz başarıyla gerçekleştirildi. Yeni işlem yapmak için hazırsınız.",
         { position: "top-center" }
@@ -196,6 +195,7 @@ function WorkerForm() {
       setLoading(false);
       // form gönderme işlemi
       router.push("/worker");
+      setActivePage(1);
     } else {
       toast.error("Lütfen işlem noktası seçin!", { position: "top-center" });
       setLoading(false);

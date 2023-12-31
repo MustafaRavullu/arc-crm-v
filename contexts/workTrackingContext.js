@@ -409,20 +409,7 @@ export default function WorkTrackingContextProvider({ children }) {
     //   ],
     // },
   ]);
-  const [customers, setCustomers] = useState([
-    {
-      id: 1,
-      name: "LC Waikiki",
-    },
-    {
-      id: 2,
-      name: "Koton",
-    },
-    {
-      id: 3,
-      name: "Mavi",
-    },
-  ]);
+  const [customers, setCustomers] = useState([]);
   const [fiberTypes, setFiberTypes] = useState([
     {
       id: 1,
@@ -452,37 +439,48 @@ export default function WorkTrackingContextProvider({ children }) {
       code: "576434",
     },
   ]);
-  const [subcontractors, setSubcontractors] = useState([
-    {
-      id: 1,
-      name: "ahmet",
-      type: "Aksesuar",
-    },
-    {
-      id: 2,
-      name: "mehmet",
-      type: "Ütü",
-    },
-    {
-      id: 3,
-      name: "veli",
-      type: "Dokuma",
-    },
-    {
-      id: 4,
-      name: "can",
-      type: "Konfeksiyon",
-    },
-    {
-      id: 5,
-      name: "tufan",
-      type: "Yıkama",
-    },
-  ]);
+  const [subcontractors, setSubcontractors] = useState([]);
   const [selectedWorkOrder, setSelectedWorkOrder] = useState(null);
   const [selectedTransactionPoint, setSelectedTransactionPoint] =
     useState("İp Deposu");
   const [globalLoading, setGlobalLoading] = useState(false);
+  const [formDataForReturnWorkOrder, setFormDataForReturnWorkOrder] = useState({
+    workOrderCode: "", //bitti
+    productType: "ürün", // otomtatik
+    customer: "", // select bitti
+    image: null, //bitti
+    startedAt: "", // otomatik
+    finishedAt: "Devam ediyor", //otomatik
+    active: true, //otomatik
+    jobType: "normal", //otomatik
+    fiber: [], // select bitti
+    description: "", // bitti
+    grammage: "", // bitti
+    bedenBoy: "", // bitti
+    bedenEn: "", // bitti
+    kolBoyu: "", // bitti
+    kolPazu: "", // bitti
+    kolEni: "", // bitti
+    onYakaDusuklugu: "", // bitti
+    arkaYakaDusuklugu: "", // bitti
+    omuzDusuklugu: "", // bitti
+    ense: "", // bitti
+    bedenOnBandGenisligi: "", // bitti
+    bedenOnBandUzunlugu: "", // bitti
+    bedenLastikBoyu: "", // bitti
+    yakaYuksekligi: "", // bitti
+    yakaEni: "", // bitti
+    makinaNo: "", // bitti
+    targetAmount: [
+      // select
+      // {
+      //   id: 1,
+      //   color: "",
+      //   amount: "",
+      // },
+    ],
+    stories: [],
+  });
   return (
     <WorkTrackingContext.Provider
       value={{
@@ -504,6 +502,8 @@ export default function WorkTrackingContextProvider({ children }) {
         setSubcontractors,
         globalLoading,
         setGlobalLoading,
+        formDataForReturnWorkOrder,
+        setFormDataForReturnWorkOrder,
       }}
     >
       {children}

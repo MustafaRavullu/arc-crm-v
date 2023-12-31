@@ -376,9 +376,10 @@ export default function FiberOrder() {
             formData.customer === "" ||
             formData.targetAmount.some((fiberInfo) =>
               Object.values(fiberInfo).some((value) => value === "")
-            )
+            ) ||
+            formData.targetAmount.length === 0
           }
-          className="simple_button flex justify-center disabled:opacity-50"
+          className="simple_button z-50 flex justify-center disabled:opacity-50"
         >
           {loading ? (
             <HashLoader size={20} color="#008000" />
@@ -433,11 +434,11 @@ const BasicSelect = ({ data, setFormData, formData, property, label }) => {
         <ChevronDownIcon className="w-5" />
       </button>
       <div
-        className={`z-50 absolute flex flex-col gap-2 top-full right-0 left-0 rounded-lg bg-white shadow-md dark:bg-arc_black ${
+        className={`z-50 absolute flex flex-col text-white dark:text-black top-full right-0 left-0 rounded-lg bg-arc_black shadow-md dark:bg-white ${
           isOpen ? "block" : "hidden"
         }`}
       >
-        <div className="flex border-b items-center border-black dark:border-white">
+        <div className="flex border-b items-center border-white dark:border-black">
           <div className="pl-2.5">
             <MagnifyingGlassIcon className="w-5 " />
           </div>
@@ -446,19 +447,21 @@ const BasicSelect = ({ data, setFormData, formData, property, label }) => {
             placeholder="Ara"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            className="bg-white text-base dark:bg-arc_black p-2.5 outline-none w-[170px]"
+            className="bg-arc_black text-base dark:bg-white p-2.5 outline-none w-[170px]"
           />
         </div>
-        {filteredData.map((item, index) => (
-          <button
-            key={index}
-            type="button"
-            onClick={() => handleClick(item.transactionPoint)}
-            className="p-3 hover:bg-black rounded-lg hover:text-white dark:hover:bg-white dark:hover:text-black"
-          >
-            {item.transactionPoint}
-          </button>
-        ))}
+        <div className="flex flex-col gap-2 h-[200px] overflow-auto">
+          {filteredData.map((item, index) => (
+            <button
+              key={index}
+              type="button"
+              onClick={() => handleClick(item.transactionPoint)}
+              className="p-3 hover:bg-white rounded-lg hover:text-black dark:hover:bg-arc_black dark:hover:text-white"
+            >
+              {item.transactionPoint}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
   ChevronDownIcon,
@@ -12,10 +12,51 @@ import {
 import useWhenClickedOutside from "@/hooks/useWhenClickedOutside";
 import { useWorkTrackingContext } from "@/contexts/workTrackingContext";
 import Select from "@/components/Select";
+import {
+  collection,
+  doc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
+import { db } from "@/firebase.config";
+import { toast } from "sonner";
+import { HashLoader } from "react-spinners";
 
 export default function ReturnFiberOrder() {
-  const handleSubmit = (event) => {
+  const [loading, setLoading] = useState(false);
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    setLoading(true);
+    event.preventDefault();
+    await updateDoc(doc(db, "workOrders", formData.id), {
+      customer: formData.customer,
+      targetAmount: formData.targetAmount,
+    });
+    setFormData({
+      id: uuidv4(),
+      workOrderCode: "", //bitti
+      productType: "ip", // otomtatik
+      customer: "", // select bitti
+      image: null, //bitti
+      startedAt: "", // otomatik
+      finishedAt: "Devam ediyor", //otomatik
+      active: true, //otomatik
+      jobType: "normal", //otomatik
+      targetAmount: [
+        // select
+        {
+          id: 1,
+          code: "",
+          amount: "",
+          unit: "",
+        },
+      ],
+      stories: [],
+    });
+    setLoading(false);
+    toast.success("İş emri başarıyla düzenlendi", { position: "top-center" });
   };
   const [formData, setFormData] = useState({
     id: uuidv4(),
@@ -63,8 +104,64 @@ export default function ReturnFiberOrder() {
       ],
     });
   }
-  const { customers, fiberTypes, colors, fiberCodes, workOrders } =
-    useWorkTrackingContext();
+  useEffect(() => {
+    const getActiveWorkOrders = async () => {
+      const querySnapshot = await getDocs(collection(db, "workOrderLists"));
+      const workOrderLists = [];
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        workOrderLists.push({ ...doc.data(), id: doc.id });
+      });
+      const mergedArray = workOrderLists.flatMap((obj) => obj.arr);
+      setWorkOrders(mergedArray);
+
+      // const querySnapshot2 = await getDocs(collection(db, "fiberTypes"));
+      // const fiberTypeLists = [];
+      // querySnapshot2.forEach((doc) => {
+      //   // doc.data() is never undefined for query doc snapshots
+      //   fiberTypeLists.push({ ...doc.data(), id: doc.id });
+      // });
+      // setFiberTypes(fiberTypeLists);
+
+      // const querySnapshot3 = await getDocs(collection(db, "colors"));
+      // const colorLists = [];
+      // querySnapshot3.forEach((doc) => {
+      //   // doc.data() is never undefined for query doc snapshots
+      //   colorLists.push({ ...doc.data(), id: doc.id });
+      // });
+      // const mergedArray3 = colorLists.flatMap((obj) => obj.arr);
+      // setColors(mergedArray3);
+
+      const querySnapshot4 = await getDocs(collection(db, "customers"));
+      const customerLists = [];
+      querySnapshot4.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        customerLists.push({ ...doc.data(), id: doc.id });
+      });
+      const mergedArray4 = customerLists.flatMap((obj) => obj.arr);
+      setCustomers(mergedArray4);
+
+      const querySnapshot2 = await getDocs(collection(db, "fiberCodes"));
+      const fiberCodeLists = [];
+      querySnapshot2.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        fiberCodeLists.push({ ...doc.data(), id: doc.id });
+      });
+      const mergedArray2 = fiberCodeLists.flatMap((obj) => obj.arr);
+      setFiberCodes(mergedArray2);
+    };
+    getActiveWorkOrders();
+  }, []);
+  const {
+    customers,
+    fiberTypes,
+    setWorkOrders,
+    setCustomers,
+    setFiberCodes,
+    colors,
+    fiberCodes,
+    workOrders,
+  } = useWorkTrackingContext();
   const units = [
     {
       id: 1,
@@ -97,7 +194,7 @@ export default function ReturnFiberOrder() {
               label={"İş Emri"}
             />
           </fieldset>
-          <fieldset className="border border-black dark:border-white p-2 w-full md:flex-1    rounded-lg">
+          {/* <fieldset className="border border-black dark:border-white p-2 w-full md:flex-1    rounded-lg">
             <legend className="font-bold">Adım 2(Zorunlu)</legend>
             <div className="flex flex-col gap-1">
               <div className="font-semibold">İş Emri Fotoğrafı</div>
@@ -131,9 +228,9 @@ export default function ReturnFiberOrder() {
                 </label>
               )}
             </div>
-          </fieldset>
+          </fieldset> */}
           <fieldset className="border border-black dark:border-white p-2 w-full md:flex-1    rounded-lg">
-            <legend className="font-bold">Adım 3(Zorunlu)</legend>
+            <legend className="font-bold">Adım 2(Zorunlu)</legend>
             <BasicSelect
               data={customers}
               setFormData={setFormData}
@@ -145,14 +242,14 @@ export default function ReturnFiberOrder() {
         </div>
 
         <fieldset className="md:flex md:flex-col md:w-fit md:gap-3 border border-black dark:border-white p-2 w-full  rounded-lg">
-          <legend className="font-bold">Adım 4(Zorunlu)</legend>
+          <legend className="font-bold">Adım 3(Zorunlu)</legend>
           <div className=" relative md:w-[500px] h-[400px]">
             <div className="h-full flex flex-col gap-2">
               <div className="font-semibold">Miktar</div>
               <button
                 type="button"
                 onClick={handleFiberItemAdd}
-                className="flex justify-center text-white dark:text-black p-3 bg-arc_black z-40 rounded-lg sticky -top-6  dark:bg-white "
+                className="flex justify-center text-white dark:text-black p-3 bg-arc_black z-30 rounded-lg sticky -top-6  dark:bg-white "
               >
                 <PlusIcon className="w-5 aspect-square" />
                 Yeni Alan Ekle
@@ -206,8 +303,24 @@ export default function ReturnFiberOrder() {
             </div>
           </div>
         </fieldset>
-        <button type="submit" className="simple_button w-full md:w-fit">
-          İş Emrini Oluştur
+        <button
+          type="submit"
+          disabled={
+            loading ||
+            formData.workOrderCode === "" ||
+            formData.customer === "" ||
+            formData.targetAmount.some((fiberInfo) =>
+              Object.values(fiberInfo).some((value) => value === "")
+            ) ||
+            formData.targetAmount.length === 0
+          }
+          className="simple_button w-full md:w-fit"
+        >
+          {loading ? (
+            <HashLoader size={20} color="#008000" />
+          ) : (
+            "İş Emrini Düzenle"
+          )}
         </button>
       </div>
     </form>
@@ -256,11 +369,11 @@ const BasicSelect = ({ data, setFormData, formData, property, label }) => {
         <ChevronDownIcon className="w-5" />
       </button>
       <div
-        className={`z-50 absolute flex flex-col gap-2 top-full right-0 left-0 rounded-lg bg-white shadow-md dark:bg-arc_black ${
+        className={`z-50 absolute flex flex-col top-full right-0 left-0 rounded-lg bg-arc_black text-white dark:text-arc_black shadow-md dark:bg-white ${
           isOpen ? "block" : "hidden"
         }`}
       >
-        <div className="flex border-b items-center border-black dark:border-white">
+        <div className="flex border-b items-center border-white dark:border-black">
           <div className="pl-2.5">
             <MagnifyingGlassIcon className="w-5 " />
           </div>
@@ -269,18 +382,21 @@ const BasicSelect = ({ data, setFormData, formData, property, label }) => {
             placeholder="Ara"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            className="bg-white text-base dark:bg-arc_black p-2.5 outline-none w-[170px]"
+            className="bg-arc_black text-base dark:bg-white p-2.5 outline-none w-[170px]"
           />
         </div>
-        {filteredData.map((item) => (
-          <button
-            key={item.id}
-            onClick={() => handleClick(item.name)}
-            className="p-3 hover:bg-black rounded-lg hover:text-white dark:hover:bg-white dark:hover:text-black"
-          >
-            {item.name}
-          </button>
-        ))}
+        <div className="flex flex-col gap-2 overflow-auto h-[200px]">
+          {filteredData.map((item, index) => (
+            <button
+              key={index}
+              type="button"
+              onClick={() => handleClick(item.transactionPoint)}
+              className="p-3 hover:bg-white rounded-lg hover:text-black dark:hover:bg-arc_black dark:hover:text-white"
+            >
+              {item.transactionPoint}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -356,14 +472,21 @@ const MultipleSelect = ({ setFormData, formData }) => {
 const JustSelect = ({ data, setFormData, formData, property, label }) => {
   const [isOpen, setIsOpen] = useState(false);
   const ref = useWhenClickedOutside(() => setIsOpen(false));
-  const [query, setQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const filteredData = data.filter((item) =>
     item.workOrderCode
       .toLocaleLowerCase("tr")
-      .includes(query.toLocaleLowerCase("tr"))
+      .includes(searchQuery.toLocaleLowerCase("tr"))
   );
-  const handleClick = (name) => {
-    setFormData(name);
+  const handleClick = async (item) => {
+    const q = query(
+      collection(db, "workOrders"),
+      where("workOrderCode", "==", item.workOrderCode)
+    );
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      setFormData({ ...doc.data(), id: doc.id });
+    });
     setIsOpen(false);
   };
   return (
@@ -380,31 +503,34 @@ const JustSelect = ({ data, setFormData, formData, property, label }) => {
         <ChevronDownIcon className="w-5" />
       </button>
       <div
-        className={`z-50 absolute flex flex-col gap-2 top-full right-0 left-0 rounded-lg bg-white shadow-md dark:bg-arc_black ${
+        className={`z-50 absolute flex flex-col  top-full right-0 left-0 rounded-lg bg-arc_black text-white dark:text-black shadow-md dark:bg-white ${
           isOpen ? "block" : "hidden"
         }`}
       >
-        <div className="flex border-b items-center border-black dark:border-white">
+        <div className="flex border-b items-center border-white dark:border-black">
           <div className="pl-2.5">
             <MagnifyingGlassIcon className="w-5 " />
           </div>
           <input
             type="text"
             placeholder="Ara"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            className="bg-white text-base dark:bg-arc_black p-2.5 outline-none w-[170px]"
+            value={searchQuery}
+            onChange={(event) => setSearchQuery(event.target.value)}
+            className="bg-arc_black text-base dark:bg-white p-2.5 outline-none w-[170px]"
           />
         </div>
-        {filteredData.map((item) => (
-          <button
-            key={item.id}
-            onClick={() => handleClick(item)}
-            className="p-3 hover:bg-black rounded-lg hover:text-white dark:hover:bg-white dark:hover:text-black"
-          >
-            {item.workOrderCode}
-          </button>
-        ))}
+        <div className="flex flex-col gap-2 overflow-auto h-[200px]">
+          {filteredData.map((item, index) => (
+            <button
+              key={index}
+              type="button"
+              onClick={() => handleClick(item)}
+              className="p-3 hover:bg-white rounded-lg hover:text-black dark:hover:bg-arc_black dark:hover:text-white"
+            >
+              {item.workOrderCode}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
