@@ -538,8 +538,8 @@ function DirectFiberSale() {
   }
 
   return (
-    <div className="flex-1 flex justify-center items-center">
-      <div className="flex flex-col w-full min-h-[calc(100dvh-10rem)] md:min-h-[500px] gap-3 max-w-[calc(100vw-5rem)] md:max-w-[600px]">
+    <div className="flex-1 flex justify-center items-start mt-5">
+      <div className="flex flex-col w-full max-h-[calc(100dvh-15rem)] md:min-h-[500px] gap-3 max-w-[calc(100vw-5rem)] md:max-w-[600px]">
         <ProgressBar width={activePage * 20} />
         <form
           onSubmit={handleSubmit}

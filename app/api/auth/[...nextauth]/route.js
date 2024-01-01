@@ -8,6 +8,7 @@ import {
   getDocs,
   doc,
   setDoc,
+  updateDoc,
 } from "firebase/firestore";
 
 export const authOptions = {
@@ -58,11 +59,16 @@ export const authOptions = {
         const querySnapshot = await getDocs(q);
         querySnapshot.forEach((doc) => {
           // doc.data() is never undefined for query doc snapshots
-          console.log(doc.data());
           isUserExist = { ...doc.data(), id: doc.id };
         });
+        if (isUserExist.loggedIn === true) {
+          return null;
+        }
 
         if (isUserExist && isUserExist.password === credentials.password) {
+          await updateDoc(doc(db, "users", isUserExist.id), {
+            loggedIn: true,
+          });
           return isUserExist;
         } else {
           return null;
@@ -83,6 +89,7 @@ export const authOptions = {
         token.role = user.role;
         token.username = user.username;
         token.displayName = user.displayName;
+        token.id = user.id;
       }
       return token;
     },
@@ -91,6 +98,7 @@ export const authOptions = {
         session.user.role = token.role;
         session.user.username = token.username;
         session.user.displayName = token.displayName;
+        session.user.id = token.id;
       }
       return session;
     },

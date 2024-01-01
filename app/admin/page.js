@@ -196,7 +196,7 @@ export default async function AdminDashboard() {
           <Card key={item.id} {...item} shadow={"shadow-md"} />
         ))}
       </div>
-      <div className="md:flex-1 h-[700px] md:h-auto grid md:grid-cols-3 gap-6">
+      <div className="md:flex-1 h-[1000px] md:h-auto grid md:grid-cols-3 gap-6">
         {salesData.map((item) => (
           <BarGraph
             key={item.id}

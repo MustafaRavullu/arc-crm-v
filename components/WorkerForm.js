@@ -628,7 +628,7 @@ function WorkerForm() {
     setActivePage((prev) => prev - 1);
   };
   return (
-    <div className="flex flex-col w-full min-h-[calc(100dvh-10rem)] md:min-h-[500px] gap-3 max-w-[calc(100vw-5rem)] md:max-w-[600px]">
+    <div className="flex flex-col w-full min-h-[calc(100dvh-15rem)] md:min-h-[500px] gap-3 max-w-[calc(100vw-5rem)] md:max-w-[600px]">
       <ProgressBar width={activePage * 16.6666666667} />
       <form
         onSubmit={handleSubmit}

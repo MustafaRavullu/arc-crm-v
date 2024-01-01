@@ -85,7 +85,7 @@ export default function LoginForm() {
           onClick={handleLogin}
           className="simple_button"
         >
-          {loading ? <HashLoader size={20} /> : "Giriş Yap"}
+          {loading ? <HashLoader size={20} color="#008000" /> : "Giriş Yap"}
         </button>
       </form>
     </main>
