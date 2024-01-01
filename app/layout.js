@@ -6,6 +6,7 @@ import { Toaster } from "sonner";
 const manrope = Manrope({ subsets: ["latin"] });
 
 export const metadata = {
+  manifest: "/manifest.json",
   title: "ARC CRM",
   description: "",
 };
