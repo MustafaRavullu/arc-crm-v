@@ -69,12 +69,7 @@ function DirectFiberSale() {
         stories: arrayUnion({
           id: formData.id,
           operationType: formData.operationType,
-          subcontractorFollower:
-            session?.user?.username
-              .split("@")[0]
-              .charAt(0)
-              .toLocaleUpperCase("tr") +
-            session?.user?.username.split("@")[0].slice(1),
+          subcontractorFollower: session?.user?.displayName,
           productType: "ip",
           operationNumber: formData.operationNumber,
           operationTime: new Date().toLocaleString("tr-TR"),
@@ -588,7 +583,7 @@ function DirectFiberSale() {
                     <PlusIcon className="w-5 aspect-square" />
                     Yeni Alan Ekle
                   </button>
-                  <div className="flex flex-col   divide-y-2 divide-gray-100 dark:divide-gray-600 h-[calc(100vh-22rem)] overflow-auto">
+                  <div className="flex flex-col   divide-y-2 divide-gray-100 dark:divide-gray-600 h-[250px] overflow-auto">
                     {formData.fiberAmount.map((fiber, index) => (
                       <div key={index} className="flex flex-col gap-1 py-5">
                         <Select
@@ -718,7 +713,7 @@ function DirectFiberSale() {
                     <PlusIcon className="w-5 aspect-square" />
                     Yeni Alan Ekle
                   </button>
-                  <div className="flex flex-col   divide-y-2 divide-gray-100 dark:divide-gray-600 h-[calc(100vh-22rem)] overflow-auto">
+                  <div className="flex flex-col   divide-y-2 divide-gray-100 dark:divide-gray-600 h-[250px] overflow-auto">
                     {formData.productAmount.map((product, index) => (
                       <div key={index} className="flex flex-col gap-1 py-5">
                         <Select
