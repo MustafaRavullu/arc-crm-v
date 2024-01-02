@@ -247,7 +247,7 @@ const BasicSelect = ({ data, setFormData, formData, property, label }) => {
         <ChevronDownIcon className="w-5" />
       </button>
       <div
-        className={`z-10 absolute flex flex-col gap-2 top-full right-0 left-0 rounded-lg bg-white shadow-md dark:bg-arc_black ${
+        className={`z-10 absolute flex max-h-[150px] overflow-auto flex-col gap-2 top-full text-white dark:text-black right-0 left-0 rounded-lg bg-arc_black shadow-md dark:bg-white ${
           isOpen ? "block" : "hidden"
         }`}
       >
@@ -256,7 +256,7 @@ const BasicSelect = ({ data, setFormData, formData, property, label }) => {
             key={index}
             type="button"
             onClick={() => handleClick(item.type)}
-            className="p-3 hover:bg-black rounded-lg hover:text-white dark:hover:bg-white dark:hover:text-black"
+            className="p-3 hover:bg-white rounded-lg hover:text-arc_black dark:hover:bg-arc_black dark:hover:text-white"
           >
             {item.type}
           </button>
