@@ -1,1 +1,94 @@
-if(!self.define){let e,n={};const a=(a,s)=>(a=new URL(a+".js",s).href,n[a]||new Promise((n=>{if("document"in self){const e=document.createElement("script");e.src=a,e.onload=n,document.head.appendChild(e)}else e=a,importScripts(a),n()})).then((()=>{let e=n[a];if(!e)throw new Error(`Module ${a} didn’t register its module`);return e})));self.define=(s,r)=>{const t=e||("document"in self?document.currentScript.src:"")||location.href;if(n[t])return;let i={};const c=e=>a(e,t),p={module:{uri:t},exports:i,require:c};n[t]=Promise.all(s.map((e=>p[e]||c(e)))).then((e=>(r(...e),i)))}}define(["./workbox-c06b064f"],(function(e){"use strict";importScripts(),self.skipWaiting(),e.clientsClaim(),e.precacheAndRoute([{url:"/_next/static/SYG8H1nUHpBUrRYTSlJHR/_buildManifest.js",revision:"a27b2b7607326fa26b144e657011ec52"},{url:"/_next/static/SYG8H1nUHpBUrRYTSlJHR/_ssgManifest.js",revision:"b6652df95db52feb4daf4eca35380933"},{url:"/_next/static/chunks/1424-9f5958af852843de.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/2749-96e359e4ce81e80e.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/3606-425fbb5ea7cc8243.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/3746-da35da671c0789de.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/4729-afe868bfca703518.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/4805-f3f11f6c2c97ae21.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/5250-bec0340673caf496.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/6877-c43d9e26aa2bd6a6.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/9389-8f9adb175a8b05fe.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/9849-20813c40ace6579b.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/9919-da81d6fe8a2b7283.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/_not-found-9a30b772cb9ff94f.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/admin/layout-1a77023c31cd3630.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/admin/page-1d000bc1cbca3b33.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/admin/test/page-983582f32486efe9.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/admin/work-tracking/active-work-orders/page-30898a76095cd7f3.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/admin/work-tracking/completed-work-orders/page-988b140c3957d004.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/admin/work-tracking/create/color/page-51b72091fabfd9c4.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/admin/work-tracking/create/customer/page-8de7b859f8d258ba.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/admin/work-tracking/create/fiber-code/page-47d7e93b821839cd.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/admin/work-tracking/create/fiber-order/page-ea313ea44c0e8ed0.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/admin/work-tracking/create/fiber-type/page-b99b4a472df2ebfa.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/admin/work-tracking/create/layout-bb2fbf0f213f31e6.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/admin/work-tracking/create/page-efaa2f38460826e0.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/admin/work-tracking/create/return-fiber-order/page-09fcd0b0b9de26c0.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/admin/work-tracking/create/return-work-order/page-4483bee8b0daa9fb.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/admin/work-tracking/create/subcontractor-follower/page-76bd32d131b7e620.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/admin/work-tracking/create/subcontractor/page-88a59661512de8a6.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/admin/work-tracking/create/work-order/page-f9072b529bd5ddc2.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/admin/work-tracking/delete/color/page-ef1bef8eb7010642.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/admin/work-tracking/delete/customer/page-8c26aeb7210809bd.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/admin/work-tracking/delete/fiber-code/page-027e012a412cfdfd.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/admin/work-tracking/delete/fiber-order/page-f0649abb5e003f18.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/admin/work-tracking/delete/fiber-type/page-4e76bf633053744e.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/admin/work-tracking/delete/layout-b12bf72578d5166d.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/admin/work-tracking/delete/page-6cbab002f385d22c.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/admin/work-tracking/delete/return-fiber-order/page-fa30e920c64322b4.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/admin/work-tracking/delete/return-work-order/page-f97b7b8abab6bcaf.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/admin/work-tracking/delete/subcontractor-follower/page-5ea0875057adfd7e.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/admin/work-tracking/delete/subcontractor/page-ad3e4172bf14cb81.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/admin/work-tracking/delete/work-order/page-e14b5f830cfa6b94.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/admin/work-tracking/edit/fiber-order/page-fbe647819312431f.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/admin/work-tracking/edit/layout-aa6a65867aaebb1f.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/admin/work-tracking/edit/page-686281e290cc4b42.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/admin/work-tracking/edit/return-fiber-order/page-260e20d0c1ae9d53.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/admin/work-tracking/edit/return-work-order/page-fab665328974dbb9.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/admin/work-tracking/edit/work-order/page-ae5a4b335834fd60.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/admin/work-tracking/layout-9fff43f56b08403f.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/admin/work-tracking/page-b33600d9500c2b3b.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/denied/page-bd08dc358174507f.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/layout-cd2e8f53959d3f44.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/login/page-a09273ae5da542ec.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/page-5d6ed1b2299cf5d7.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/worker/direct-fiber-sale/page-71f66bc6f11292ee.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/worker/layout-773621ac76d488b1.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/worker/page-660a1e77613a77a3.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/app/worker/product-operation/page-79457a5d01df25f4.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/bc9e92e6-6f6098c06696c075.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/fd9d1056-d058c9fc4407a6fa.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/framework-4498e84bb0ba1830.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/main-7f729a512674f83a.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/main-app-a42275b017c90ab8.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/pages/_app-31397adcb4d2b835.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/pages/_error-b225d4412fb76f89.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js",revision:"837c0df77fd5009c9e46d446188ecfd0"},{url:"/_next/static/chunks/webpack-61d25afa3b07e13f.js",revision:"SYG8H1nUHpBUrRYTSlJHR"},{url:"/_next/static/css/8f8957569d1ecfaa.css",revision:"8f8957569d1ecfaa"},{url:"/_next/static/media/008f2e8b4aae291f-s.woff2",revision:"54718ab24898dc8cd382ef3f285cfd0d"},{url:"/_next/static/media/3534416bbfdcc9be-s.p.woff2",revision:"8951283ba1faa0d2c460f42df9366ca1"},{url:"/_next/static/media/3c46462b57ac880e-s.woff2",revision:"3942629d96d5cee049ce769cefb891e1"},{url:"/_next/static/media/4529092560591ab4-s.woff2",revision:"4f8626e31885b0732c32a2358239d9cf"},{url:"/_next/static/media/78187650dd6b50b3-s.woff2",revision:"d84d7157146a9c9347d9c07d172dc651"},{url:"/_next/static/media/b8222d26e20b2e06-s.woff2",revision:"6c7142c441804cd078afe45be959fa78"},{url:"/swe-worker-4da67dda9bc18c53.js",revision:"5a47d90db13bb1309b25bdf7b363570e"}],{ignoreURLParametersMatching:[]}),e.cleanupOutdatedCaches(),e.registerRoute("/",new e.NetworkFirst({cacheName:"start-url",plugins:[{cacheWillUpdate:async({response:e})=>e&&"opaqueredirect"===e.type?new Response(e.body,{status:200,statusText:"OK",headers:e.headers}):e}]}),"GET"),e.registerRoute(/^https:\/\/fonts\.(?:gstatic)\.com\/.*/i,new e.CacheFirst({cacheName:"google-fonts-webfonts",plugins:[new e.ExpirationPlugin({maxEntries:4,maxAgeSeconds:31536e3})]}),"GET"),e.registerRoute(/^https:\/\/fonts\.(?:googleapis)\.com\/.*/i,new e.StaleWhileRevalidate({cacheName:"google-fonts-stylesheets",plugins:[new e.ExpirationPlugin({maxEntries:4,maxAgeSeconds:604800})]}),"GET"),e.registerRoute(/\.(?:eot|otf|ttc|ttf|woff|woff2|font.css)$/i,new e.StaleWhileRevalidate({cacheName:"static-font-assets",plugins:[new e.ExpirationPlugin({maxEntries:4,maxAgeSeconds:604800})]}),"GET"),e.registerRoute(/\.(?:jpg|jpeg|gif|png|svg|ico|webp)$/i,new e.StaleWhileRevalidate({cacheName:"static-image-assets",plugins:[new e.ExpirationPlugin({maxEntries:64,maxAgeSeconds:2592e3})]}),"GET"),e.registerRoute(/\/_next\/static.+\.js$/i,new e.CacheFirst({cacheName:"next-static-js-assets",plugins:[new e.ExpirationPlugin({maxEntries:64,maxAgeSeconds:86400})]}),"GET"),e.registerRoute(/\/_next\/image\?url=.+$/i,new e.StaleWhileRevalidate({cacheName:"next-image",plugins:[new e.ExpirationPlugin({maxEntries:64,maxAgeSeconds:86400})]}),"GET"),e.registerRoute(/\.(?:mp3|wav|ogg)$/i,new e.CacheFirst({cacheName:"static-audio-assets",plugins:[new e.RangeRequestsPlugin,new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:86400})]}),"GET"),e.registerRoute(/\.(?:mp4|webm)$/i,new e.CacheFirst({cacheName:"static-video-assets",plugins:[new e.RangeRequestsPlugin,new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:86400})]}),"GET"),e.registerRoute(/\.(?:js)$/i,new e.StaleWhileRevalidate({cacheName:"static-js-assets",plugins:[new e.ExpirationPlugin({maxEntries:48,maxAgeSeconds:86400})]}),"GET"),e.registerRoute(/\.(?:css|less)$/i,new e.StaleWhileRevalidate({cacheName:"static-style-assets",plugins:[new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:86400})]}),"GET"),e.registerRoute(/\/_next\/data\/.+\/.+\.json$/i,new e.StaleWhileRevalidate({cacheName:"next-data",plugins:[new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:86400})]}),"GET"),e.registerRoute(/\.(?:json|xml|csv)$/i,new e.NetworkFirst({cacheName:"static-data-assets",plugins:[new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:86400})]}),"GET"),e.registerRoute((({sameOrigin:e,url:{pathname:n}})=>!(!e||n.startsWith("/api/auth/callback")||!n.startsWith("/api/"))),new e.NetworkFirst({cacheName:"apis",networkTimeoutSeconds:10,plugins:[new e.ExpirationPlugin({maxEntries:16,maxAgeSeconds:86400})]}),"GET"),e.registerRoute((({request:e,url:{pathname:n},sameOrigin:a})=>"1"===e.headers.get("RSC")&&"1"===e.headers.get("Next-Router-Prefetch")&&a&&!n.startsWith("/api/")),new e.NetworkFirst({cacheName:"pages-rsc-prefetch",plugins:[new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:86400})]}),"GET"),e.registerRoute((({request:e,url:{pathname:n},sameOrigin:a})=>"1"===e.headers.get("RSC")&&a&&!n.startsWith("/api/")),new e.NetworkFirst({cacheName:"pages-rsc",plugins:[new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:86400})]}),"GET"),e.registerRoute((({url:{pathname:e},sameOrigin:n})=>n&&!e.startsWith("/api/")),new e.NetworkFirst({cacheName:"pages",plugins:[new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:86400})]}),"GET"),e.registerRoute((({sameOrigin:e})=>!e),new e.NetworkFirst({cacheName:"cross-origin",networkTimeoutSeconds:10,plugins:[new e.ExpirationPlugin({maxEntries:32,maxAgeSeconds:3600})]}),"GET"),self.__WB_DISABLE_DEV_LOGS=!0}));
+/**
+ * Copyright 2018 Google Inc. All Rights Reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// If the loader is already loaded, just stop.
+if (!self.define) {
+  let registry = {};
+
+  // Used for `eval` and `importScripts` where we can't get script URL by other means.
+  // In both cases, it's safe to use a global var because those functions are synchronous.
+  let nextDefineUri;
+
+  const singleRequire = (uri, parentUri) => {
+    uri = new URL(uri + ".js", parentUri).href;
+    return registry[uri] || (
+      
+        new Promise(resolve => {
+          if ("document" in self) {
+            const script = document.createElement("script");
+            script.src = uri;
+            script.onload = resolve;
+            document.head.appendChild(script);
+          } else {
+            nextDefineUri = uri;
+            importScripts(uri);
+            resolve();
+          }
+        })
+      
+      .then(() => {
+        let promise = registry[uri];
+        if (!promise) {
+          throw new Error(`Module ${uri} didn’t register its module`);
+        }
+        return promise;
+      })
+    );
+  };
+
+  self.define = (depsNames, factory) => {
+    const uri = nextDefineUri || ("document" in self ? document.currentScript.src : "") || location.href;
+    if (registry[uri]) {
+      // Module is already loading or loaded.
+      return;
+    }
+    let exports = {};
+    const require = depUri => singleRequire(depUri, uri);
+    const specialDeps = {
+      module: { uri },
+      exports,
+      require
+    };
+    registry[uri] = Promise.all(depsNames.map(
+      depName => specialDeps[depName] || require(depName)
+    )).then(deps => {
+      factory(...deps);
+      return exports;
+    });
+  };
+}
+define(['./workbox-7144475a'], (function (workbox) { 'use strict';
+
+  importScripts();
+  self.skipWaiting();
+  workbox.clientsClaim();
+  workbox.registerRoute("/", new workbox.NetworkFirst({
+    "cacheName": "start-url",
+    plugins: [{
+      cacheWillUpdate: async ({
+        response: e
+      }) => e && "opaqueredirect" === e.type ? new Response(e.body, {
+        status: 200,
+        statusText: "OK",
+        headers: e.headers
+      }) : e
+    }]
+  }), 'GET');
+  workbox.registerRoute(/.*/i, new workbox.NetworkOnly({
+    "cacheName": "dev",
+    plugins: []
+  }), 'GET');
+  self.__WB_DISABLE_DEV_LOGS = true;
+
+}));
+//# sourceMappingURL=sw.js.map

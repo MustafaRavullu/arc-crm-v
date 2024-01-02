@@ -49,7 +49,7 @@ export default function Subcontractor() {
       setLoading(false);
       return;
     }
-    if (subcontractorLists[subcontractorLists.length - 1].arr.length < 3) {
+    if (subcontractorLists[subcontractorLists.length - 1].arr.length < 5000) {
       const docRef = doc(db, "subcontractors", `${subcontractorLists.length}`);
       try {
         await setDoc(
@@ -148,6 +148,28 @@ export default function Subcontractor() {
     });
   };
   const { subcontractors } = useWorkTrackingContext();
+  const subcontractorTypes = [
+    {
+      id: 1,
+      type: "Aksesuar",
+    },
+    {
+      id: 2,
+      type: "Yıkama",
+    },
+    {
+      id: 3,
+      type: "Ütü",
+    },
+    {
+      id: 4,
+      type: "Dokuma",
+    },
+    {
+      id: 5,
+      type: "Konfeksiyon",
+    },
+  ];
   return (
     <form
       onSubmit={handleSubmit}
@@ -168,7 +190,7 @@ export default function Subcontractor() {
         <fieldset className="border h-fit md:w-fit border-black dark:border-white p-2 w-full     rounded-lg">
           <legend className="font-bold">Adım 2(Zorunlu)</legend>
           <BasicSelect
-            data={subcontractors}
+            data={subcontractorTypes}
             setFormData={setFormData}
             formData={formData}
             property={"type"}
@@ -229,9 +251,9 @@ const BasicSelect = ({ data, setFormData, formData, property, label }) => {
           isOpen ? "block" : "hidden"
         }`}
       >
-        {data.map((item) => (
+        {data.map((item, index) => (
           <button
-            key={item.id}
+            key={index}
             type="button"
             onClick={() => handleClick(item.type)}
             className="p-3 hover:bg-black rounded-lg hover:text-white dark:hover:bg-white dark:hover:text-black"

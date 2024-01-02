@@ -9,9 +9,38 @@ import { useWorkTrackingContext } from "@/contexts/workTrackingContext";
 import { TagIcon, SwatchIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import { Battery0Icon } from "@heroicons/react/24/solid";
+import { useEffect } from "react";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/firebase.config";
 
 export default function CompletedWorkOrders() {
-  const { workOrders, selectedWorkOrder } = useWorkTrackingContext();
+  useEffect(() => {
+    const getActiveWorkOrders = async () => {
+      const querySnapshot = await getDocs(collection(db, "workOrderLists"));
+      const workOrderLists = [];
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        workOrderLists.push({ ...doc.data(), id: doc.id });
+      });
+      const mergedArray = workOrderLists.flatMap((obj) => obj.arr);
+      setWorkOrders(mergedArray);
+    };
+    getActiveWorkOrders();
+
+    // const q = query(collection(db, "workOrders"), where("active", "==", true));
+    // const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    //   const activeWorkOrders = [];
+    //   querySnapshot.forEach((doc) => {
+    //     activeWorkOrders.push({ ...doc.data(), id: doc.id });
+    //   });
+    //   setWorkOrders(activeWorkOrders);
+    // });
+    // return () => {
+    //   unsubscribe();
+    // };
+  }, []);
+  const { workOrders, setWorkOrders, selectedWorkOrder } =
+    useWorkTrackingContext();
   return (
     <div className="flex-1 flex gap-6 md:flex-row flex-col">
       <div className="flex-1 bg-white shadow-md rounded-lg dark:bg-arc_black">
@@ -66,7 +95,11 @@ export default function CompletedWorkOrders() {
                   ) : (
                     <BarGraph
                       data={selectedWorkOrder.targetAmount}
-                      nameKey={"color"}
+                      nameKey={
+                        selectedWorkOrder.productType === "ip"
+                          ? "code"
+                          : "color"
+                      }
                       valueKey={"amount"}
                       color={"#e6ff00"}
                       title={"Hedef Miktar"}

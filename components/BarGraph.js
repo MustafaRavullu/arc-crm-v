@@ -28,7 +28,13 @@ export default function BarGraph({
       : type.toLocaleLowerCase("tr") === "fiber"
       ? data.find((item) => item.year === selectedYear)
       : type.toLocaleLowerCase("tr") === "targetamount"
-      ? data
+      ? data.map((item) => {
+          if (item?.unit?.toLocaleLowerCase("tr") === "ton") {
+            return { ...item, amount: `${Number(item.amount) * 1000}` };
+          } else {
+            return item;
+          }
+        })
       : {};
   return (
     <div className="flex h-full flex-col gap-6 p-6 shadow-md rounded-lg">
@@ -79,6 +85,7 @@ const CustomTooltip = ({ active, payload, label }) => {
         <p className="text-sm">
           <span className="ml-2 text-yellow-600">{payload[0].value}</span>
         </p>
+        {payload[0].payload.unit ? <span className="ml-2 ">Kg</span> : null}
       </div>
     );
   }

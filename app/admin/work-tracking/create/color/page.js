@@ -43,7 +43,7 @@ export default function Color() {
       setLoading(false);
       return;
     }
-    if (colorLists[colorLists.length - 1].arr.length < 3) {
+    if (colorLists[colorLists.length - 1].arr.length < 8000) {
       const docRef = doc(db, "colors", `${colorLists.length}`);
       try {
         await setDoc(

@@ -145,7 +145,7 @@ export default function WorkOrder() {
       // doc.data() is never undefined for query doc snapshots
       workOrderLists.push({ ...doc.data(), id: doc.id });
     });
-    if (workOrderLists[workOrderLists.length - 1].arr.length < 3) {
+    if (workOrderLists[workOrderLists.length - 1].arr.length < 3000) {
       const docRef = doc(db, "workOrderLists", `${workOrderLists.length}`);
       try {
         await setDoc(

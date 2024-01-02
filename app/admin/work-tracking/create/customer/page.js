@@ -44,7 +44,7 @@ export default function Subcontractor() {
       setLoading(false);
       return;
     }
-    if (customerLists[customerLists.length - 1].arr.length < 3) {
+    if (customerLists[customerLists.length - 1].arr.length < 8000) {
       const docRef = doc(db, "customers", `${customerLists.length}`);
       try {
         await setDoc(

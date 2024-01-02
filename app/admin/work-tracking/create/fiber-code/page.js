@@ -43,7 +43,7 @@ export default function FiberCode() {
       setLoading(false);
       return;
     }
-    if (fiberCodeLists[fiberCodeLists.length - 1].arr.length < 3) {
+    if (fiberCodeLists[fiberCodeLists.length - 1].arr.length < 8000) {
       const docRef = doc(db, "fiberCodes", `${fiberCodeLists.length}`);
       try {
         await setDoc(

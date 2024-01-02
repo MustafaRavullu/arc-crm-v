@@ -209,7 +209,7 @@ export default function WorkOrderDetails({ productType }) {
         ))}
       </div>
       {productType === "ürün" && (
-        <div className="flex-1 relative">
+        <div className="md:flex-1 h-[300px] md:h-auto  relative">
           <div className="absolute inset-0 flex flex-col gap-6 overflow-auto">
             {specificDetails.map((item) => (
               <Card

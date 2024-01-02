@@ -185,7 +185,11 @@ export default function ActiveWorkOrders() {
                     ) : (
                       <BarGraph
                         data={selectedWorkOrder.targetAmount}
-                        nameKey={"color"}
+                        nameKey={
+                          selectedWorkOrder.productType === "ip"
+                            ? "code"
+                            : "color"
+                        }
                         valueKey={"amount"}
                         color={"#e6ff00"}
                         title={"Hedef Miktar"}
@@ -200,7 +204,7 @@ export default function ActiveWorkOrders() {
                 <TrackingPanel />
               </div>
             </div>
-            <div className="md:flex-1 h-[800px] md:h-auto bg-white shadow-md rounded-lg dark:bg-arc_black">
+            <div className="flex-1 bg-white shadow-md rounded-lg dark:bg-arc_black">
               <WorkOrderDetails productType={selectedWorkOrder.productType} />
             </div>
           </div>
