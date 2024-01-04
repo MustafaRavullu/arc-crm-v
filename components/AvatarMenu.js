@@ -15,8 +15,7 @@ export default function AvatarMenu() {
   const signOutUser = async () => {
     setLoading(true);
     await updateDoc(doc(db, "users", session.user.id), { loggedIn: false });
-    await signOut();
-    router.push("/login");
+    await signOut({ callbackUrl: "https://arc-crm-v.vercel.app/login" });
     setLoading(false);
   };
   return (
