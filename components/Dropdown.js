@@ -12,7 +12,7 @@ export default function Dropdown({ children, buttonContent, marginTop }) {
   }, [pathname]);
   const ref = useWhenClickedOutside(() => setIsOpen(false));
   return (
-    <div className="relative z-50" ref={ref}>
+    <div className="relative z-[52]" ref={ref}>
       <button type="button" onClick={() => setIsOpen((prev) => !prev)}>
         {buttonContent}
       </button>

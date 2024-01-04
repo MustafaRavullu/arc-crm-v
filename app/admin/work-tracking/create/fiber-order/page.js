@@ -193,6 +193,7 @@ export default function FiberOrder() {
     const updatedFiberInfos = [...formData.targetAmount];
     updatedFiberInfos.splice(id, 1);
     setFormData({ ...formData, targetAmount: [...updatedFiberInfos] });
+    toast.success("Alan silindi", { position: "top-center" });
   }
   function handleFiberItemAdd() {
     setFormData({
@@ -207,6 +208,7 @@ export default function FiberOrder() {
         },
       ],
     });
+    toast.success("Yeni alan eklendi", { position: "top-center" });
   }
   const {
     customers,
@@ -286,6 +288,7 @@ export default function FiberOrder() {
                   <input
                     type="file"
                     id="image-input"
+                    accept="image/*"
                     className="hidden"
                     onChange={(event) => setImage(event.target.files[0])}
                   />
@@ -379,7 +382,7 @@ export default function FiberOrder() {
             ) ||
             formData.targetAmount.length === 0
           }
-          className="simple_button z-50 flex justify-center disabled:opacity-50"
+          className="simple_button z-50 flex justify-center w-full md:w-fit disabled:opacity-50"
         >
           {loading ? (
             <HashLoader size={20} color="#008000" />

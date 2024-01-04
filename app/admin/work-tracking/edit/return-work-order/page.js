@@ -252,6 +252,7 @@ export default function ReturnWorkOrder() {
     const updatedFiberInfos = [...formData.targetAmount];
     updatedFiberInfos.splice(id, 1);
     setFormData({ ...formData, targetAmount: [...updatedFiberInfos] });
+    toast.success("Alan silindi", { position: "top-center" });
   }
   function handleFiberItemAdd() {
     setFormData({
@@ -265,6 +266,7 @@ export default function ReturnWorkOrder() {
         },
       ],
     });
+    toast.success("Yeni alan eklendi", { position: "top-center" });
   }
   useEffect(() => {
     const getActiveWorkOrders = async () => {
@@ -322,7 +324,7 @@ export default function ReturnWorkOrder() {
     >
       <div className="absolute inset-0 overflow-auto p-6 flex  flex-col gap-2">
         <div className="flex flex-col md:flex-row gap-3 md:w-[900px] ">
-          <fieldset className="border border-black dark:border-white p-2 w-full md:flex-1    rounded-lg">
+          <fieldset className="border border-black dark:border-white p-2  md:w-1/2    rounded-lg">
             <legend className="font-bold">Adım 1(Zorunlu)</legend>
             <JustSelect
               data={workOrders.filter(
@@ -372,107 +374,117 @@ export default function ReturnWorkOrder() {
               )}
             </div>
           </fieldset> */}
-          <fieldset className="border border-black dark:border-white p-2 w-full md:flex-1    rounded-lg">
-            <legend className="font-bold">Adım 2</legend>
-            <BasicSelect
-              data={customers}
-              setFormData={setFormData}
-              formData={formData}
-              property={"customer"}
-              label={"Müşteri"}
-            />
-          </fieldset>
-        </div>
-        <fieldset className="md:flex md:flex-col md:w-fit md:gap-3 border border-black dark:border-white p-2 w-full  rounded-lg">
-          <legend className="font-bold">Adım 3</legend>
-          <div className="md:grid md:grid-cols-7 md:gap-3 flex flex-col gap-2">
-            {inputInfos.map((item) => (
-              <Input
-                key={item.id}
-                {...item}
-                formData={formData}
+          {formData.workOrderCode && (
+            <fieldset className="border border-black dark:border-white p-2 w-full md:flex-1    rounded-lg">
+              <legend className="font-bold">Adım 2</legend>
+              <BasicSelect
+                data={customers}
                 setFormData={setFormData}
+                formData={formData}
+                property={"customer"}
+                label={"Müşteri"}
               />
-            ))}
-          </div>
-          <div className="flex flex-col gap-1">
-            <label htmlFor="" className="font-semibold">
-              Açıklama
-            </label>
-            <textarea
-              value={formData.description}
-              onChange={(event) =>
-                setFormData({ ...formData, description: event.target.value })
-              }
-              placeholder="İş emri açıklaması girin"
-              className="bg-white text-base outline-none dark:bg-arc_black p-3 border border-arc_black dark:border-white rounded-lg"
-            ></textarea>
-          </div>
-        </fieldset>
-
-        <div className="flex flex-col md:flex-row gap-3">
+            </fieldset>
+          )}
+        </div>
+        {formData.workOrderCode && (
           <fieldset className="md:flex md:flex-col md:w-fit md:gap-3 border border-black dark:border-white p-2 w-full  rounded-lg">
-            <legend className="font-bold">Adım 4</legend>
-            <div className="w-full md:w-[300px] h-[300px] flex flex-col gap-2 ">
-              <div className="font-semibold">Miktar</div>
-              <button
-                type="button"
-                onClick={handleFiberItemAdd}
-                className="flex justify-center text-white dark:text-black p-3 bg-arc_black z-40 rounded-lg sticky -top-6  dark:bg-white "
-              >
-                <PlusIcon className="w-5 aspect-square" />
-                Yeni Alan Ekle
-              </button>
-              <div className="flex-1 flex relative">
-                <div className="flex-1 absolute divide-y divide-arc_black dark:divide-white inset-0 overflow-auto">
-                  {formData.targetAmount.map((item, index) => (
-                    <div key={index} className="flex py-5 flex-col gap-2 ">
-                      <Select
-                        property="color"
-                        items={colors}
-                        formData={formData}
-                        setFormData={setFormData}
-                        title="Renk seçin"
-                        searchActive={true}
-                        complex={true}
-                        complexProperty="targetAmount"
-                        complexIndex={index}
-                      />
-                      <input
-                        type="number"
-                        placeholder="Miktar girin"
-                        value={item.amount}
-                        onChange={(event) =>
-                          handleFiberInputChange(event, index)
-                        }
-                        className="w-full text-base border bg-transparent border-arc_black dark:border-white rounded-lg flex gap-1 focus-within:border-black dark:focus-within:border-white outline-none p-3"
-                      />
-                      <button
-                        type="button"
-                        className="w-fit mx-auto"
-                        onClick={() => handleFiberItemDelete(index)}
-                      >
-                        <TrashIcon className="w-8 aspect-square text-red-500" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
+            <legend className="font-bold">Adım 3</legend>
+            <div className="md:grid md:grid-cols-7 md:gap-3 flex flex-col gap-2">
+              {inputInfos.map((item) => (
+                <Input
+                  key={item.id}
+                  {...item}
+                  formData={formData}
+                  setFormData={setFormData}
+                />
+              ))}
+            </div>
+            <div className="flex flex-col gap-1">
+              <label htmlFor="" className="font-semibold">
+                Açıklama
+              </label>
+              <textarea
+                value={formData.description}
+                onChange={(event) =>
+                  setFormData({ ...formData, description: event.target.value })
+                }
+                placeholder="İş emri açıklaması girin"
+                className="bg-white text-base outline-none dark:bg-arc_black p-3 border border-arc_black dark:border-white rounded-lg"
+              ></textarea>
             </div>
           </fieldset>
-          <fieldset className="md:flex md:flex-col md:w-fit md:gap-3 border border-black dark:border-white p-2 w-full  rounded-lg">
-            <legend className="font-bold">Adım 5(Zorunlu)</legend>
-            <MultipleSelect formData={formData} setFormData={setFormData} />
-          </fieldset>
-        </div>
+        )}
+
+        {formData.workOrderCode && (
+          <div className="flex flex-col md:flex-row gap-3">
+            <fieldset className="md:flex md:flex-col md:w-fit md:gap-3 border border-black dark:border-white p-2 w-full  rounded-lg">
+              <legend className="font-bold">Adım 4</legend>
+              <div className="w-full md:w-[300px] h-[300px] flex flex-col gap-2 ">
+                <div className="font-semibold">Miktar</div>
+                <button
+                  type="button"
+                  onClick={handleFiberItemAdd}
+                  className="flex justify-center text-white dark:text-black p-3 bg-arc_black z-40 rounded-lg sticky -top-6  dark:bg-white "
+                >
+                  <PlusIcon className="w-5 aspect-square" />
+                  Yeni Alan Ekle
+                </button>
+                <div className="flex-1 flex relative">
+                  <div className="flex-1 absolute divide-y divide-arc_black dark:divide-white inset-0 overflow-auto">
+                    {formData.targetAmount.map((item, index) => (
+                      <div key={index} className="flex py-5 flex-col gap-2 ">
+                        <Select
+                          property="color"
+                          items={colors}
+                          formData={formData}
+                          setFormData={setFormData}
+                          title="Renk seçin"
+                          searchActive={true}
+                          complex={true}
+                          complexProperty="targetAmount"
+                          complexIndex={index}
+                        />
+                        <input
+                          type="number"
+                          placeholder="Miktar girin"
+                          value={item.amount}
+                          onChange={(event) =>
+                            handleFiberInputChange(event, index)
+                          }
+                          className="w-full text-base border bg-transparent border-arc_black dark:border-white rounded-lg flex gap-1 focus-within:border-black dark:focus-within:border-white outline-none p-3"
+                        />
+                        <button
+                          type="button"
+                          className="w-fit mx-auto"
+                          onClick={() => handleFiberItemDelete(index)}
+                        >
+                          <TrashIcon className="w-8 aspect-square text-red-500" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+            <fieldset className="md:flex md:flex-col md:w-fit md:gap-3 border border-black dark:border-white p-2 w-full  rounded-lg">
+              <legend className="font-bold">Adım 5(Zorunlu)</legend>
+              <MultipleSelect formData={formData} setFormData={setFormData} />
+            </fieldset>
+          </div>
+        )}
         <button
           type="submit"
           disabled={
             formData.workOrderCode === "" ||
             formData.fiber.length === 0 ||
+            (formData.targetAmount.length !== 0 &&
+              formData.targetAmount.some((productAmount) =>
+                Object.values(productAmount).some((value) => value === "")
+              )) ||
             loading
           }
-          className="simple_button w-full md:w-fit"
+          className="simple_button w-full flex justify-center md:w-fit"
         >
           {loading ? (
             <HashLoader size={20} color="#008000" />

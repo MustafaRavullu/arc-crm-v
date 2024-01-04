@@ -36,7 +36,7 @@ export default function TransactionPointList({ data }) {
               {selectedWorkOrder.stories.find(
                 (x) => x.transactionPointType === item.type
               ) && (
-                <div>
+                <div className="pl-2">
                   <ChatBubbleBottomCenterTextIcon className="w-5" />
                 </div>
               )}

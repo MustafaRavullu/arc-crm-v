@@ -89,6 +89,7 @@ export default function ReturnFiberOrder() {
     const updatedFiberInfos = [...formData.targetAmount];
     updatedFiberInfos.splice(id, 1);
     setFormData({ ...formData, targetAmount: [...updatedFiberInfos] });
+    toast.success("Alan silindi", { position: "top-center" });
   }
   function handleFiberItemAdd() {
     setFormData({
@@ -103,6 +104,7 @@ export default function ReturnFiberOrder() {
         },
       ],
     });
+    toast.success("Yeni alan eklendi", { position: "top-center" });
   }
   useEffect(() => {
     const getActiveWorkOrders = async () => {
@@ -179,7 +181,7 @@ export default function ReturnFiberOrder() {
     >
       <div className="absolute inset-0 p-6 flex overflow-auto flex-col gap-2">
         <div className="flex flex-col md:flex-row gap-3 md:w-[900px] ">
-          <fieldset className="border border-black dark:border-white p-2 w-full md:flex-1    rounded-lg">
+          <fieldset className="border border-black dark:border-white p-2 md:w-1/2    rounded-lg">
             <legend className="font-bold">Adım 1(Zorunlu)</legend>
             <JustSelect
               data={workOrders.filter(
@@ -229,80 +231,84 @@ export default function ReturnFiberOrder() {
               )}
             </div>
           </fieldset> */}
-          <fieldset className="border border-black dark:border-white p-2 w-full md:flex-1    rounded-lg">
-            <legend className="font-bold">Adım 2(Zorunlu)</legend>
-            <BasicSelect
-              data={customers}
-              setFormData={setFormData}
-              formData={formData}
-              property={"customer"}
-              label={"Müşteri"}
-            />
-          </fieldset>
+          {formData.workOrderCode && (
+            <fieldset className="border border-black dark:border-white p-2 w-full md:flex-1    rounded-lg">
+              <legend className="font-bold">Adım 2(Zorunlu)</legend>
+              <BasicSelect
+                data={customers}
+                setFormData={setFormData}
+                formData={formData}
+                property={"customer"}
+                label={"Müşteri"}
+              />
+            </fieldset>
+          )}
         </div>
 
-        <fieldset className="md:flex md:flex-col md:w-fit md:gap-3 border border-black dark:border-white p-2 w-full  rounded-lg">
-          <legend className="font-bold">Adım 3(Zorunlu)</legend>
-          <div className=" relative md:w-[500px] h-[400px]">
-            <div className="h-full flex flex-col gap-2">
-              <div className="font-semibold">Miktar</div>
-              <button
-                type="button"
-                onClick={handleFiberItemAdd}
-                className="flex justify-center text-white dark:text-black p-3 bg-arc_black z-30 rounded-lg sticky -top-6  dark:bg-white "
-              >
-                <PlusIcon className="w-5 aspect-square" />
-                Yeni Alan Ekle
-              </button>
-              <div className="flex-1 relative ">
-                <div className=" absolute divide-y divide-arc_black dark:divide-white inset-0 overflow-auto">
-                  {formData.targetAmount.map((item, index) => (
-                    <div key={index} className="flex flex-col gap-2 py-5">
-                      <Select
-                        property="code"
-                        items={fiberCodes}
-                        formData={formData}
-                        setFormData={setFormData}
-                        title="İplik Kodu Seçin"
-                        searchActive={true}
-                        complex={true}
-                        complexProperty="targetAmount"
-                        complexIndex={index}
-                      />
-                      <input
-                        type="number"
-                        placeholder="Miktar girin"
-                        value={item.amount}
-                        onChange={(event) =>
-                          handleFiberInputChange(event, index)
-                        }
-                        className="w-full text-base border bg-transparent border-gray-100 dark:border-gray-600 rounded-lg flex gap-1 focus-within:border-black dark:focus-within:border-white outline-none p-3"
-                      />
-                      <Select
-                        property="unit"
-                        items={units}
-                        formData={formData}
-                        setFormData={setFormData}
-                        title="Birim seçin"
-                        searchActive={false}
-                        complex={true}
-                        complexProperty="targetAmount"
-                        complexIndex={index}
-                      />
-                      <button
-                        type="button"
-                        className="w-fit mx-auto"
-                        onClick={() => handleFiberItemDelete(index)}
-                      >
-                        <TrashIcon className="w-8 aspect-square text-red-500" />
-                      </button>
-                    </div>
-                  ))}
+        {formData.workOrderCode && (
+          <fieldset className="md:flex md:flex-col md:w-fit md:gap-3 border border-black dark:border-white p-2 w-full  rounded-lg">
+            <legend className="font-bold">Adım 3(Zorunlu)</legend>
+            <div className=" relative md:w-[500px] h-[400px]">
+              <div className="h-full flex flex-col gap-2">
+                <div className="font-semibold">Miktar</div>
+                <button
+                  type="button"
+                  onClick={handleFiberItemAdd}
+                  className="flex justify-center text-white dark:text-black p-3 bg-arc_black z-30 rounded-lg sticky -top-6  dark:bg-white "
+                >
+                  <PlusIcon className="w-5 aspect-square" />
+                  Yeni Alan Ekle
+                </button>
+                <div className="flex-1 relative ">
+                  <div className=" absolute divide-y divide-arc_black dark:divide-white inset-0 overflow-auto">
+                    {formData.targetAmount.map((item, index) => (
+                      <div key={index} className="flex flex-col gap-2 py-5">
+                        <Select
+                          property="code"
+                          items={fiberCodes}
+                          formData={formData}
+                          setFormData={setFormData}
+                          title="İplik Kodu Seçin"
+                          searchActive={true}
+                          complex={true}
+                          complexProperty="targetAmount"
+                          complexIndex={index}
+                        />
+                        <input
+                          type="number"
+                          placeholder="Miktar girin"
+                          value={item.amount}
+                          onChange={(event) =>
+                            handleFiberInputChange(event, index)
+                          }
+                          className="w-full text-base border bg-transparent border-gray-100 dark:border-gray-600 rounded-lg flex gap-1 focus-within:border-black dark:focus-within:border-white outline-none p-3"
+                        />
+                        <Select
+                          property="unit"
+                          items={units}
+                          formData={formData}
+                          setFormData={setFormData}
+                          title="Birim seçin"
+                          searchActive={false}
+                          complex={true}
+                          complexProperty="targetAmount"
+                          complexIndex={index}
+                        />
+                        <button
+                          type="button"
+                          className="w-fit mx-auto"
+                          onClick={() => handleFiberItemDelete(index)}
+                        >
+                          <TrashIcon className="w-8 aspect-square text-red-500" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </fieldset>
+          </fieldset>
+        )}
         <button
           type="submit"
           disabled={
@@ -314,7 +320,7 @@ export default function ReturnFiberOrder() {
             ) ||
             formData.targetAmount.length === 0
           }
-          className="simple_button w-full md:w-fit"
+          className="simple_button w-full flex justify-center md:w-fit"
         >
           {loading ? (
             <HashLoader size={20} color="#008000" />

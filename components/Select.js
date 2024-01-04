@@ -69,7 +69,7 @@ function Select({
         <ChevronDownIcon className="w-5 aspect-square" />
       </button>
       <div
-        className={`z-10 flex flex-col border border-gray-100 absolute rounded-lg transition-all duration-200 ease-in-out bg-white top-full right-0  left-0 dark:bg-black dark:border-gray-600 ${
+        className={`z-10 flex flex-col border border-arc_black text-white dark:text-black absolute rounded-lg transition-all duration-200 ease-in-out bg-arc_black top-full right-0  left-0 dark:bg-white dark:border-white ${
           isMenuOpen
             ? "pointer-events-auto visible opacity-100 translate-y-0"
             : "pointer-events-none invisible opacity-0 translate-y-4"
@@ -95,7 +95,7 @@ function Select({
                 key={index}
                 onClick={handleOptionClick}
                 value={item[property]}
-                className="text-left p-2 hover:bg-gray-100 dark:hover:bg-gray-600"
+                className="text-left p-3 hover:bg-white rounded-lg dark:hover:bg-arc_black hover:text-black dark:hover:text-white"
               />
             ))
           ) : (

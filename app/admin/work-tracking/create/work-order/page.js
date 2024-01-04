@@ -357,6 +357,7 @@ export default function WorkOrder() {
     const updatedFiberInfos = [...formData.targetAmount];
     updatedFiberInfos.splice(id, 1);
     setFormData({ ...formData, targetAmount: [...updatedFiberInfos] });
+    toast.success("Alan silindi", { position: "top-center" });
   }
   function handleFiberItemAdd() {
     setFormData({
@@ -370,6 +371,7 @@ export default function WorkOrder() {
         },
       ],
     });
+    toast.success("Yeni alan eklendi", { position: "top-center" });
   }
   const {
     customers,
@@ -447,6 +449,7 @@ export default function WorkOrder() {
                   <input
                     type="file"
                     id="image-input"
+                    accept="image/*"
                     className="hidden"
                     onChange={(event) => setImage(event.target.files[0])}
                   />
@@ -553,6 +556,10 @@ export default function WorkOrder() {
             formData.workOrderCode === "" ||
             image === null ||
             formData.fiber.length === 0 ||
+            (formData.targetAmount.length !== 0 &&
+              formData.targetAmount.some((productAmount) =>
+                Object.values(productAmount).some((value) => value === "")
+              )) ||
             loading
           }
           className="simple_button z-50 flex justify-center w-full md:w-fit"

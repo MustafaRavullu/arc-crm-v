@@ -71,7 +71,10 @@ export default function Navbar() {
     setSelectedWorkOrder(null);
   }, [pathname]);
   return (
-    <nav className="flex justify-between">
+    <nav
+      className="flex justify-between items-center bg-white dark:bg-arc_black sticky top-[63px] border-b md:border-none border-black dark:border-white
+     p-0.5  z-[53]"
+    >
       <div className="font-bold text-4xl">
         {titles.map((item) => pathname.includes(item.path) && item.label)}
       </div>

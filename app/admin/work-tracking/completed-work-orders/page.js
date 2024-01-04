@@ -89,7 +89,7 @@ export default function CompletedWorkOrders() {
                 </div>
                 <div className="md:flex-[2] h-[300px] md:h-auto">
                   {selectedWorkOrder.targetAmount.length === 0 ? (
-                    <div className="h-full w-full flex justify-center items-center font-semibold bg-white shadow-md dark:bg-arc_black rounded-lg">
+                    <div className="h-full w-full text-center flex justify-center items-center font-semibold bg-white shadow-md dark:bg-arc_black rounded-lg">
                       Bu iş emri için herhangi bir hedef miktar belirlenmedi
                     </div>
                   ) : (

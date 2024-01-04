@@ -17,7 +17,7 @@ export default function AvatarMenu() {
     setLoading(false);
   };
   return (
-    <div className="z-[51] flex flex-col border rounded-lg w-[250px] p-3 gap-5">
+    <div className="z-[55] flex flex-col border rounded-lg w-[250px] p-3 gap-5">
       <div className="flex items-center gap-3">
         <UserIcon className="w-6" />
         <div className="font-semibold">{session?.user?.displayName}</div>
