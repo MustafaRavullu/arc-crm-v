@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { signIn, useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { HashLoader } from "react-spinners";
 import { toast } from "sonner";
 export default function LoginForm() {
@@ -13,15 +13,16 @@ export default function LoginForm() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-  useEffect(() => {
+  const router = useRouter();
+
+  useLayoutEffect(() => {
     if (session?.user?.role === "admin" || session?.user?.role === "watcher") {
-      redirect("/admin");
+      router.push("/admin");
     }
     if (session?.user?.role === "worker") {
-      redirect("/worker");
+      router.push("/worker");
     }
   }, [session]);
-
   const handleLogin = async (event) => {
     event.preventDefault();
     setError(false);

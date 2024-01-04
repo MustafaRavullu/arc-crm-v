@@ -4,16 +4,19 @@ import { db } from "@/firebase.config";
 import { UserCircleIcon, UserIcon } from "@heroicons/react/24/outline";
 import { doc, updateDoc } from "firebase/firestore";
 import { signOut, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { HashLoader } from "react-spinners";
 
 export default function AvatarMenu() {
   const { data: session } = useSession();
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const signOutUser = async () => {
     setLoading(true);
     await updateDoc(doc(db, "users", session.user.id), { loggedIn: false });
-    signOut();
+    await signOut();
+    router.push("/login");
     setLoading(false);
   };
   return (
