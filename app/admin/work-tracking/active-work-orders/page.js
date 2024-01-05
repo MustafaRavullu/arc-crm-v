@@ -134,15 +134,15 @@ export default function ActiveWorkOrders() {
                       <button
                         type="button"
                         onClick={() => {
-                          if (selectedWorkOrder.customer === "") {
-                            toast.error(
-                              "Bu iş emrinin belirlenmiş bir müşterisi yokken 'Tamamlama' işlemini yapamazsınız. Eğer iş emrinin müşterisi varsa lütfen iş emrini düzenledikten sonra tekrar deneyin.",
-                              {
-                                position: "top-center",
-                              }
-                            );
-                            return;
-                          }
+                          // if (selectedWorkOrder.customer === "") {
+                          //   toast.error(
+                          //     "Bu iş emrinin belirlenmiş bir müşterisi yokken 'Tamamlama' işlemini yapamazsınız. Eğer iş emrinin müşterisi varsa lütfen iş emrini düzenledikten sonra tekrar deneyin.",
+                          //     {
+                          //       position: "top-center",
+                          //     }
+                          //   );
+                          //   return;
+                          // }
                           completeWorkOrderModalRef?.current?.showModal();
                         }}
                         className="simple_button w-full"

@@ -67,6 +67,7 @@ export default function SubcontractorFollower() {
         displayName: formData.username.trim(),
         password: formData.password.trim(),
         role: formData.role,
+        loggedIn: false,
       });
       toast.success("Fason takipçisi oluşturuldu.", {
         position: "top-center",

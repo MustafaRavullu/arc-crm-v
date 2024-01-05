@@ -61,6 +61,7 @@ export default async function AdminDashboard() {
       type: "product",
       color: "#e6ff00",
       title: "Aylık Ürün Satışları",
+      baseType: "monthlyProductSales",
       data: [
         {
           id: 1,
@@ -105,6 +106,7 @@ export default async function AdminDashboard() {
       type: "fiber",
       color: "#66ff00",
       title: "Aylık İp Satışları",
+      baseType: "monthlyFiberSales",
       data: [
         {
           id: 1,
@@ -149,6 +151,7 @@ export default async function AdminDashboard() {
       type: "product",
       color: "#ffcc00",
       title: "Aylık Üretim",
+      baseType: "monthlyProductProduction",
       data: [
         {
           id: 1,
@@ -197,9 +200,9 @@ export default async function AdminDashboard() {
         ))}
       </div>
       <div className="md:flex-1 h-[1000px] md:h-auto grid md:grid-cols-3 gap-6">
-        {salesData.map((item) => (
+        {salesData.map((item, index) => (
           <BarGraph
-            key={item.id}
+            key={index}
             data={item.data}
             nameKey={"name"}
             valueKey={"value"}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ProgressBar from "./ProgressBar";
 import { v4 as uuidv4 } from "uuid";
 import ButtonSelect from "./ButtonSelect";
@@ -412,6 +412,8 @@ function WorkerForm() {
     },
   ];
   const [storedWorkOrder, setStoredWorkOrder] = useState(null);
+  const approvedFiberRef = useRef(null);
+  const approvedProductRef = useRef(null);
   async function handlePageSkip(activePage) {
     switch (activePage) {
       case 2:
@@ -447,7 +449,7 @@ function WorkerForm() {
               position: "top-center",
             });
           } else {
-            setActivePage((prev) => prev + 1);
+            approvedFiberRef?.current?.showModal();
           }
         } else {
           if (
@@ -463,7 +465,7 @@ function WorkerForm() {
               position: "top-center",
             });
           } else {
-            setActivePage((prev) => prev + 1);
+            approvedProductRef?.current?.showModal();
           }
         }
         break;
@@ -616,243 +618,20 @@ function WorkerForm() {
     setActivePage((prev) => prev - 1);
   };
   return (
-    <div className="flex flex-col w-full min-h-[calc(100dvh-15rem)] md:min-h-[500px] gap-3 max-w-[calc(100vw-5rem)] md:max-w-[600px]">
-      <ProgressBar width={activePage * 16.6666666667} />
-      <form
-        onSubmit={handleSubmit}
-        className="w-full justify-between flex-1 flex flex-col "
-      >
-        {activePage === 2 && (
-          <div className="flex flex-col gap-6">
-            <p className="font-semibold text-lg">İşlem Tipini Seçin:</p>
-            <div className="flex flex-col gap-3">
-              <ButtonSelect
-                items={operationTypes}
-                property="operationType"
-                searchActive={false}
-                formData={formData}
-                setFormData={setFormData}
-              />
-            </div>
-          </div>
-        )}
-        {activePage === 1 && (
-          <div className="flex flex-col gap-6">
-            <p className="font-semibold text-lg">Ürün Tipini Seçin:</p>
-            <div className="flex flex-col gap-5">
-              <ButtonSelect
-                items={productTypes}
-                property="productType"
-                searchActive={false}
-                formData={productTypeSelect}
-                setFormData={setProductTypeSelect}
-              />
-            </div>
-          </div>
-        )}
-        {activePage === 3 &&
-          formData.productType.toLocaleLowerCase("tr") === "ip" && (
+    <>
+      <div className="flex flex-col w-full min-h-[calc(100dvh-15rem)] md:min-h-[500px] gap-3 max-w-[calc(100vw-5rem)] md:max-w-[600px]">
+        <ProgressBar width={activePage * 16.6666666667} />
+        <form
+          onSubmit={handleSubmit}
+          className="w-full justify-between flex-1 flex flex-col "
+        >
+          {activePage === 2 && (
             <div className="flex flex-col gap-6">
-              <p className="font-semibold text-lg">İplik Bilgilerini Girin:</p>
-              <div className="flex flex-col gap-3 ">
-                <button
-                  type="button"
-                  onClick={handleFiberItemAdd}
-                  className="flex justify-center p-3 z-40 rounded-lg sticky top-0 bg-white dark:bg-black border border-gray-100 dark:border-gray-600"
-                >
-                  <PlusIcon className="w-5 aspect-square" />
-                  Yeni Alan Ekle
-                </button>
-                <div className="flex flex-col   divide-y-2 divide-gray-100 dark:divide-gray-600 h-[250px] overflow-auto">
-                  {formData.fiberAmount.map((fiber, index) => (
-                    <div key={index} className="flex flex-col gap-1 py-5">
-                      <Select
-                        property="code"
-                        items={fiberCodes}
-                        formData={formData}
-                        setFormData={setFormData}
-                        title="İplik kodunu seçin"
-                        searchActive={true}
-                        complex={true}
-                        complexProperty="fiberAmount"
-                        complexIndex={index}
-                      />
-                      <input
-                        type="number"
-                        placeholder="Miktar girin"
-                        value={fiber.amount}
-                        onChange={(event) =>
-                          handleFiberInputChange(event, index)
-                        }
-                        className="w-full text-base border bg-transparent border-gray-100 dark:border-gray-600 rounded-lg flex gap-1 focus-within:border-black dark:focus-within:border-white outline-none p-3"
-                      />
-                      <Select
-                        property="unit"
-                        items={fiberUnits}
-                        formData={formData}
-                        setFormData={setFormData}
-                        title="Birim seçin"
-                        searchActive={false}
-                        complex={true}
-                        complexProperty="fiberAmount"
-                        complexIndex={index}
-                      />
-                      <button
-                        type="button"
-                        className="w-fit mx-auto"
-                        onClick={() => handleFiberItemDelete(index)}
-                      >
-                        <TrashIcon className="w-8 aspect-square text-red-500" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-        {activePage === 4 &&
-          formData.productType.toLocaleLowerCase("tr") === "ip" && (
-            <div className="flex flex-col gap-6">
-              <p className="font-semibold text-lg">Ürün Kodunu seçin:</p>
-              <div className="flex flex-col gap-5">
-                <ButtonSelect
-                  items={productCodes}
-                  property="workOrderCode"
-                  searchActive={true}
-                  formData={formData}
-                  setFormData={setFormData}
-                />
-              </div>
-            </div>
-          )}
-        {activePage === 5 &&
-          formData.productType.toLocaleLowerCase("tr") === "ip" && (
-            <div className="flex flex-col gap-6">
-              <p className="font-semibold text-lg">İşlem Noktası Tipi Seçin:</p>
-              <div className="flex flex-col gap-3">
-                {formData.operationType === "Teslim Et" && (
-                  <ButtonSelect
-                    items={transactionPointTypesForFiberToDeliver}
-                    property="transactionPointType"
-                    searchActive={false}
-                    formData={formData}
-                    setFormData={setFormData}
-                  />
-                )}
-                {formData.operationType === "Teslim Al" && (
-                  <ButtonSelect
-                    items={transactionPointTypesForFiberToReceive}
-                    property="transactionPointType"
-                    searchActive={false}
-                    formData={formData}
-                    setFormData={setFormData}
-                  />
-                )}
-              </div>
-            </div>
-          )}
-        {activePage === 6 &&
-          formData.productType.toLocaleLowerCase("tr") === "ip" && (
-            <div className="flex flex-col gap-6">
-              <p className="font-semibold text-lg">İşlem Noktası Seçin:</p>
-              <div className="flex flex-col gap-3">
-                {formData.transactionPointType === "Dokuma" && (
-                  <ButtonSelect
-                    items={subcontractors.filter(
-                      (item) => item.type === "Dokuma"
-                    )}
-                    property="transactionPoint"
-                    searchActive={true}
-                    formData={formData}
-                    setFormData={setFormData}
-                  />
-                )}
-                {formData.transactionPointType === "İp Deposu" && (
-                  <ButtonSelect
-                    items={transactionPointToReceiveForFiber}
-                    property="transactionPoint"
-                    searchActive={false}
-                    formData={formData}
-                    setFormData={setFormData}
-                  />
-                )}
-              </div>
-            </div>
-          )}
-        {/* Eğer ürün tipi ürün ise */}
-        {activePage === 3 &&
-          formData.productType.toLocaleLowerCase("tr") === "ürün" && (
-            <div className="flex flex-col gap-6">
-              <p className="font-semibold text-lg">Ürün Bilgilerini Girin:</p>
-              <div className="flex flex-col gap-3 ">
-                <button
-                  type="button"
-                  onClick={handleProductAmountItemAdd}
-                  className="flex justify-center p-3 z-40 rounded-lg sticky top-0 bg-white dark:bg-black border border-gray-100 dark:border-gray-600"
-                >
-                  <PlusIcon className="w-5 aspect-square" />
-                  Yeni Alan Ekle
-                </button>
-                <div className="flex flex-col   divide-y-2 divide-gray-100 dark:divide-gray-600 h-[250px] overflow-auto">
-                  {formData.productAmount.map((product, index) => (
-                    <div key={index} className="flex flex-col gap-1 py-5">
-                      <Select
-                        property="color"
-                        items={colors}
-                        formData={formData}
-                        setFormData={setFormData}
-                        title="Ürün rengini seçin"
-                        searchActive={true}
-                        complex={true}
-                        complexProperty="productAmount"
-                        complexIndex={index}
-                      />
-                      <input
-                        type="number"
-                        placeholder="Miktar girin"
-                        value={product.amount}
-                        onChange={(event) =>
-                          handleProductAmountInputChange(event, index)
-                        }
-                        className="w-full text-base border bg-transparent border-gray-100 dark:border-gray-600 rounded-lg flex gap-1 focus-within:border-black dark:focus-within:border-white outline-none p-3"
-                      />
-                      <button
-                        type="button"
-                        className="w-fit mx-auto"
-                        onClick={() => handleProductAmountItemDelete(index)}
-                      >
-                        <TrashIcon className="w-8 aspect-square text-red-500" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-        {activePage === 4 &&
-          formData.productType.toLocaleLowerCase("tr") === "ürün" && (
-            <div className="flex flex-col gap-6">
-              <p className="font-semibold text-lg">Ürün Kodunu seçin:</p>
-              <div className="flex flex-col gap-5">
-                <ButtonSelect
-                  items={productCodes}
-                  property="workOrderCode"
-                  searchActive={true}
-                  formData={formData}
-                  setFormData={setFormData}
-                />
-              </div>
-            </div>
-          )}
-
-        {activePage === 5 &&
-          formData.productType.toLocaleLowerCase("tr") === "ürün" && (
-            <div className="flex flex-col gap-6">
-              <p className="font-semibold text-lg">İşlem Noktası Tipi Seçin:</p>
+              <p className="font-semibold text-lg">İşlem Tipini Seçin:</p>
               <div className="flex flex-col gap-3">
                 <ButtonSelect
-                  items={transactionPointTypes}
-                  property="transactionPointType"
+                  items={operationTypes}
+                  property="operationType"
                   searchActive={false}
                   formData={formData}
                   setFormData={setFormData}
@@ -860,122 +639,418 @@ function WorkerForm() {
               </div>
             </div>
           )}
-        {activePage === 6 &&
-          formData.productType.toLocaleLowerCase("tr") === "ürün" && (
+          {activePage === 1 && (
             <div className="flex flex-col gap-6">
-              <p className="font-semibold text-lg">İşlem Noktası Seçin:</p>
-              <div className="flex flex-col gap-3">
-                {formData.transactionPointType === "Müşteri" && (
+              <p className="font-semibold text-lg">Ürün Tipini Seçin:</p>
+              <div className="flex flex-col gap-5">
+                <ButtonSelect
+                  items={productTypes}
+                  property="productType"
+                  searchActive={false}
+                  formData={productTypeSelect}
+                  setFormData={setProductTypeSelect}
+                />
+              </div>
+            </div>
+          )}
+          {activePage === 3 &&
+            formData.productType.toLocaleLowerCase("tr") === "ip" && (
+              <div className="flex flex-col gap-6">
+                <p className="font-semibold text-lg">
+                  İplik Bilgilerini Girin:
+                </p>
+                <div className="flex flex-col gap-3 ">
+                  <button
+                    type="button"
+                    onClick={handleFiberItemAdd}
+                    className="flex justify-center p-3 z-40 rounded-lg sticky top-0 bg-white dark:bg-black border border-gray-100 dark:border-gray-600"
+                  >
+                    <PlusIcon className="w-5 aspect-square" />
+                    Yeni Alan Ekle
+                  </button>
+                  <div className="flex flex-col   divide-y-2 divide-gray-100 dark:divide-gray-600 h-[250px] overflow-auto">
+                    {formData.fiberAmount.map((fiber, index) => (
+                      <div key={index} className="flex flex-col gap-1 py-5">
+                        <Select
+                          property="code"
+                          items={fiberCodes}
+                          formData={formData}
+                          setFormData={setFormData}
+                          title="İplik kodunu seçin"
+                          searchActive={true}
+                          complex={true}
+                          complexProperty="fiberAmount"
+                          complexIndex={index}
+                        />
+                        <input
+                          type="number"
+                          placeholder="Miktar girin"
+                          value={fiber.amount}
+                          onChange={(event) =>
+                            handleFiberInputChange(event, index)
+                          }
+                          className="w-full text-base border bg-transparent border-gray-100 dark:border-gray-600 rounded-lg flex gap-1 focus-within:border-black dark:focus-within:border-white outline-none p-3"
+                        />
+                        <Select
+                          property="unit"
+                          items={fiberUnits}
+                          formData={formData}
+                          setFormData={setFormData}
+                          title="Birim seçin"
+                          searchActive={false}
+                          complex={true}
+                          complexProperty="fiberAmount"
+                          complexIndex={index}
+                        />
+                        <button
+                          type="button"
+                          className="w-fit mx-auto"
+                          onClick={() => handleFiberItemDelete(index)}
+                        >
+                          <TrashIcon className="w-8 aspect-square text-red-500" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          {activePage === 4 &&
+            formData.productType.toLocaleLowerCase("tr") === "ip" && (
+              <div className="flex flex-col gap-6">
+                <p className="font-semibold text-lg">Ürün Kodunu seçin:</p>
+                <div className="flex flex-col gap-5">
                   <ButtonSelect
-                    items={customers}
-                    property="transactionPoint"
+                    items={productCodes}
+                    property="workOrderCode"
                     searchActive={true}
                     formData={formData}
                     setFormData={setFormData}
                   />
-                )}
-                {formData.transactionPointType === "Dokuma" && (
+                </div>
+              </div>
+            )}
+          {activePage === 5 &&
+            formData.productType.toLocaleLowerCase("tr") === "ip" && (
+              <div className="flex flex-col gap-6">
+                <p className="font-semibold text-lg">
+                  İşlem Noktası Tipi Seçin:
+                </p>
+                <div className="flex flex-col gap-3">
+                  {formData.operationType === "Teslim Et" && (
+                    <ButtonSelect
+                      items={transactionPointTypesForFiberToDeliver}
+                      property="transactionPointType"
+                      searchActive={false}
+                      formData={formData}
+                      setFormData={setFormData}
+                    />
+                  )}
+                  {formData.operationType === "Teslim Al" && (
+                    <ButtonSelect
+                      items={transactionPointTypesForFiberToReceive}
+                      property="transactionPointType"
+                      searchActive={false}
+                      formData={formData}
+                      setFormData={setFormData}
+                    />
+                  )}
+                </div>
+              </div>
+            )}
+          {activePage === 6 &&
+            formData.productType.toLocaleLowerCase("tr") === "ip" && (
+              <div className="flex flex-col gap-6">
+                <p className="font-semibold text-lg">İşlem Noktası Seçin:</p>
+                <div className="flex flex-col gap-3">
+                  {formData.transactionPointType === "Dokuma" && (
+                    <ButtonSelect
+                      items={subcontractors.filter(
+                        (item) => item.type === "Dokuma"
+                      )}
+                      property="transactionPoint"
+                      searchActive={true}
+                      formData={formData}
+                      setFormData={setFormData}
+                    />
+                  )}
+                  {formData.transactionPointType === "İp Deposu" && (
+                    <ButtonSelect
+                      items={transactionPointToReceiveForFiber}
+                      property="transactionPoint"
+                      searchActive={false}
+                      formData={formData}
+                      setFormData={setFormData}
+                    />
+                  )}
+                </div>
+              </div>
+            )}
+          {/* Eğer ürün tipi ürün ise */}
+          {activePage === 3 &&
+            formData.productType.toLocaleLowerCase("tr") === "ürün" && (
+              <div className="flex flex-col gap-6">
+                <p className="font-semibold text-lg">Ürün Bilgilerini Girin:</p>
+                <div className="flex flex-col gap-3 ">
+                  <button
+                    type="button"
+                    onClick={handleProductAmountItemAdd}
+                    className="flex justify-center p-3 z-40 rounded-lg sticky top-0 bg-white dark:bg-black border border-gray-100 dark:border-gray-600"
+                  >
+                    <PlusIcon className="w-5 aspect-square" />
+                    Yeni Alan Ekle
+                  </button>
+                  <div className="flex flex-col   divide-y-2 divide-gray-100 dark:divide-gray-600 h-[250px] overflow-auto">
+                    {formData.productAmount.map((product, index) => (
+                      <div key={index} className="flex flex-col gap-1 py-5">
+                        <Select
+                          property="color"
+                          items={colors}
+                          formData={formData}
+                          setFormData={setFormData}
+                          title="Ürün rengini seçin"
+                          searchActive={true}
+                          complex={true}
+                          complexProperty="productAmount"
+                          complexIndex={index}
+                        />
+                        <input
+                          type="number"
+                          placeholder="Miktar girin"
+                          value={product.amount}
+                          onChange={(event) =>
+                            handleProductAmountInputChange(event, index)
+                          }
+                          className="w-full text-base border bg-transparent border-gray-100 dark:border-gray-600 rounded-lg flex gap-1 focus-within:border-black dark:focus-within:border-white outline-none p-3"
+                        />
+                        <button
+                          type="button"
+                          className="w-fit mx-auto"
+                          onClick={() => handleProductAmountItemDelete(index)}
+                        >
+                          <TrashIcon className="w-8 aspect-square text-red-500" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          {activePage === 4 &&
+            formData.productType.toLocaleLowerCase("tr") === "ürün" && (
+              <div className="flex flex-col gap-6">
+                <p className="font-semibold text-lg">Ürün Kodunu seçin:</p>
+                <div className="flex flex-col gap-5">
                   <ButtonSelect
-                    items={subcontractors.filter(
-                      (item) => item.type === "Dokuma"
-                    )}
-                    property="transactionPoint"
+                    items={productCodes}
+                    property="workOrderCode"
                     searchActive={true}
                     formData={formData}
                     setFormData={setFormData}
                   />
-                )}
-                {formData.transactionPointType === "Yıkama" && (
+                </div>
+              </div>
+            )}
+          {activePage === 5 &&
+            formData.productType.toLocaleLowerCase("tr") === "ürün" && (
+              <div className="flex flex-col gap-6">
+                <p className="font-semibold text-lg">
+                  İşlem Noktası Tipi Seçin:
+                </p>
+                <div className="flex flex-col gap-3">
                   <ButtonSelect
-                    items={subcontractors.filter(
-                      (item) => item.type === "Yıkama"
-                    )}
-                    property="transactionPoint"
-                    searchActive={true}
-                    formData={formData}
-                    setFormData={setFormData}
-                  />
-                )}
-                {formData.transactionPointType === "Ütü" && (
-                  <ButtonSelect
-                    items={subcontractors.filter((item) => item.type === "Ütü")}
-                    property="transactionPoint"
-                    searchActive={true}
-                    formData={formData}
-                    setFormData={setFormData}
-                  />
-                )}
-                {formData.transactionPointType === "Konfeksiyon" && (
-                  <ButtonSelect
-                    items={subcontractors.filter(
-                      (item) => item.type === "Konfeksiyon"
-                    )}
-                    property="transactionPoint"
-                    searchActive={true}
-                    formData={formData}
-                    setFormData={setFormData}
-                  />
-                )}
-                {formData.transactionPointType === "Aksesuar" && (
-                  <ButtonSelect
-                    items={subcontractors.filter(
-                      (item) => item.type === "Aksesuar"
-                    )}
-                    property="transactionPoint"
-                    searchActive={true}
-                    formData={formData}
-                    setFormData={setFormData}
-                  />
-                )}
-                {formData.transactionPointType === "Bitmiş Ürün Deposu" && (
-                  <ButtonSelect
-                    items={productStock}
-                    property="transactionPoint"
+                    items={transactionPointTypes}
+                    property="transactionPointType"
                     searchActive={false}
                     formData={formData}
                     setFormData={setFormData}
                   />
-                )}
+                </div>
               </div>
-            </div>
-          )}
-        <div className="grid grid-cols-2 gap-5 font-semibold">
-          {activePage !== 1 && (
+            )}
+          {activePage === 6 &&
+            formData.productType.toLocaleLowerCase("tr") === "ürün" && (
+              <div className="flex flex-col gap-6">
+                <p className="font-semibold text-lg">İşlem Noktası Seçin:</p>
+                <div className="flex flex-col gap-3">
+                  {formData.transactionPointType === "Müşteri" && (
+                    <ButtonSelect
+                      items={customers}
+                      property="transactionPoint"
+                      searchActive={true}
+                      formData={formData}
+                      setFormData={setFormData}
+                    />
+                  )}
+                  {formData.transactionPointType === "Dokuma" && (
+                    <ButtonSelect
+                      items={subcontractors.filter(
+                        (item) => item.type === "Dokuma"
+                      )}
+                      property="transactionPoint"
+                      searchActive={true}
+                      formData={formData}
+                      setFormData={setFormData}
+                    />
+                  )}
+                  {formData.transactionPointType === "Yıkama" && (
+                    <ButtonSelect
+                      items={subcontractors.filter(
+                        (item) => item.type === "Yıkama"
+                      )}
+                      property="transactionPoint"
+                      searchActive={true}
+                      formData={formData}
+                      setFormData={setFormData}
+                    />
+                  )}
+                  {formData.transactionPointType === "Ütü" && (
+                    <ButtonSelect
+                      items={subcontractors.filter(
+                        (item) => item.type === "Ütü"
+                      )}
+                      property="transactionPoint"
+                      searchActive={true}
+                      formData={formData}
+                      setFormData={setFormData}
+                    />
+                  )}
+                  {formData.transactionPointType === "Konfeksiyon" && (
+                    <ButtonSelect
+                      items={subcontractors.filter(
+                        (item) => item.type === "Konfeksiyon"
+                      )}
+                      property="transactionPoint"
+                      searchActive={true}
+                      formData={formData}
+                      setFormData={setFormData}
+                    />
+                  )}
+                  {formData.transactionPointType === "Aksesuar" && (
+                    <ButtonSelect
+                      items={subcontractors.filter(
+                        (item) => item.type === "Aksesuar"
+                      )}
+                      property="transactionPoint"
+                      searchActive={true}
+                      formData={formData}
+                      setFormData={setFormData}
+                    />
+                  )}
+                  {formData.transactionPointType === "Bitmiş Ürün Deposu" && (
+                    <ButtonSelect
+                      items={productStock}
+                      property="transactionPoint"
+                      searchActive={false}
+                      formData={formData}
+                      setFormData={setFormData}
+                    />
+                  )}
+                </div>
+              </div>
+            )}
+          <div className="grid grid-cols-2 gap-5 font-semibold">
+            {activePage !== 1 && (
+              <button
+                type="button"
+                onClick={handlePageBack}
+                className="p-3 border border-gray-100 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg"
+              >
+                Geri
+              </button>
+            )}
+            {activePage !== 6 && (
+              <button
+                type="button"
+                onClick={() => handlePageSkip(activePage)}
+                className={` ${
+                  activePage !== 5 && "col-start-2"
+                } p-3 bg-green-500 border border-green-500 hover:bg-green-600 hover:border-green-600 text-white rounded-lg`}
+              >
+                İleri
+              </button>
+            )}
+            {activePage === 6 && (
+              <button
+                type="submit"
+                className="p-3 bg-green-500 border border-green-500 hover:bg-green-600 hover:border-green-600  text-white rounded-lg col-start-2"
+              >
+                Tamamla
+              </button>
+            )}
+          </div>
+        </form>
+        {loading && (
+          <div className="z-50 fixed inset-0 bg-white/5 flex justify-center items-center pointer-events-none">
+            <HashLoader size={60} color="#008000" />
+          </div>
+        )}
+      </div>
+      <dialog ref={approvedFiberRef} className="rounded-lg">
+        <div className="p-6 flex flex-col gap-6 border-arc_black rounded-lg dark:border-white bg-white dark:bg-arc_black">
+          <div className="flex flex-col gap-1">
+            {formData.productType === "ip" &&
+              formData.fiberAmount.map((item, index) => (
+                <div key={index}>
+                  {item.amount} {item.unit} {item.code}
+                </div>
+              ))}
+          </div>
+          <div>Yukarıdaki bilgileri girdiniz. Devam etmek istiyor musunuz?</div>{" "}
+          <div className="flex justify-between">
             <button
               type="button"
-              onClick={handlePageBack}
-              className="p-3 border border-gray-100 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg"
+              onClick={() => approvedFiberRef?.current?.close()}
+              className="border py-2.5 px-5 rounded-lg"
             >
-              Geri
+              Vazgeç
             </button>
-          )}
-          {activePage !== 6 && (
             <button
               type="button"
-              onClick={() => handlePageSkip(activePage)}
-              className={` ${
-                activePage !== 5 && "col-start-2"
-              } p-3 bg-green-500 border border-green-500 hover:bg-green-600 hover:border-green-600 text-white rounded-lg`}
+              onClick={() => {
+                setActivePage((prev) => prev + 1);
+                approvedFiberRef?.current?.close();
+              }}
+              className="simple_button"
             >
-              İleri
+              Devam et
             </button>
-          )}
-          {activePage === 6 && (
+          </div>
+        </div>
+      </dialog>
+      <dialog ref={approvedProductRef} className="rounded-lg">
+        <div className="p-6 flex flex-col gap-6 border-arc_black rounded-lg dark:border-white bg-white dark:bg-arc_black">
+          <div className="flex flex-col gap-1">
+            {formData.productType === "ürün" &&
+              formData.productAmount.map((item, index) => (
+                <div key={index}>
+                  {item.amount} adet {item.color}
+                </div>
+              ))}
+          </div>
+          <div>Yukarıdaki bilgileri girdiniz. Devam etmek istiyor musunuz?</div>{" "}
+          <div className="flex justify-between">
             <button
-              type="submit"
-              className="p-3 bg-green-500 border border-green-500 hover:bg-green-600 hover:border-green-600  text-white rounded-lg col-start-2"
+              type="button"
+              onClick={() => approvedProductRef?.current?.close()}
+              className="border py-2.5 px-5 rounded-lg"
             >
-              Tamamla
+              Vazgeç
             </button>
-          )}
+            <button
+              type="button"
+              onClick={() => {
+                setActivePage((prev) => prev + 1);
+                approvedProductRef?.current?.close();
+              }}
+              className="simple_button"
+            >
+              Devam et
+            </button>
+          </div>
         </div>
-      </form>
-      {loading && (
-        <div className="z-50 fixed inset-0 bg-white/5 flex justify-center items-center pointer-events-none">
-          <HashLoader size={60} color="#008000" />
-        </div>
-      )}
-    </div>
+      </dialog>
+    </>
   );
 }
 
