@@ -635,7 +635,7 @@ function DirectFiberSale() {
             {activePage === 3 &&
               formData.productType.toLocaleLowerCase("tr") === "ip" && (
                 <div className="flex flex-col gap-6">
-                  <p className="font-semibold text-lg">Ürün Kodunu seçin:</p>
+                  <p className="font-semibold text-lg">İş Emri Seçin:</p>
                   <div className="flex flex-col gap-5">
                     <ButtonSelect
                       items={productCodes}

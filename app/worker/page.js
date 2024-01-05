@@ -7,13 +7,13 @@ export default function WorkerDashboard() {
         href={"/worker/direct-fiber-sale"}
         className="simple_button w-[200px] text-center"
       >
-        İp Satış Transferi
+        Direkt İp Satış Transferi
       </Link>
       <Link
         href={"/worker/product-operation"}
         className="simple_button w-[200px] text-center"
       >
-        Ürün İşlemi
+        Triko İçin Transfer İşlemi
       </Link>
     </div>
   );

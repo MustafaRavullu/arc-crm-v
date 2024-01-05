@@ -641,7 +641,7 @@ function WorkerForm() {
           )}
           {activePage === 1 && (
             <div className="flex flex-col gap-6">
-              <p className="font-semibold text-lg">Ürün Tipini Seçin:</p>
+              <p className="font-semibold text-lg">Transfer Edilen: </p>
               <div className="flex flex-col gap-5">
                 <ButtonSelect
                   items={productTypes}
@@ -718,7 +718,7 @@ function WorkerForm() {
           {activePage === 4 &&
             formData.productType.toLocaleLowerCase("tr") === "ip" && (
               <div className="flex flex-col gap-6">
-                <p className="font-semibold text-lg">Ürün Kodunu seçin:</p>
+                <p className="font-semibold text-lg">İş Emri Seçin:</p>
                 <div className="flex flex-col gap-5">
                   <ButtonSelect
                     items={productCodes}
@@ -791,7 +791,7 @@ function WorkerForm() {
             formData.productType.toLocaleLowerCase("tr") === "ürün" && (
               <div className="flex flex-col gap-6">
                 <p className="font-semibold text-lg">Ürün Bilgilerini Girin:</p>
-                <div className="flex flex-col gap-3 ">
+                <div className="flex flex-col gap-3">
                   <button
                     type="button"
                     onClick={handleProductAmountItemAdd}
@@ -839,7 +839,7 @@ function WorkerForm() {
           {activePage === 4 &&
             formData.productType.toLocaleLowerCase("tr") === "ürün" && (
               <div className="flex flex-col gap-6">
-                <p className="font-semibold text-lg">Ürün Kodunu seçin:</p>
+                <p className="font-semibold text-lg">İş Emri Seçin:</p>
                 <div className="flex flex-col gap-5">
                   <ButtonSelect
                     items={productCodes}
