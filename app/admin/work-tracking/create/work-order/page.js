@@ -414,7 +414,7 @@ export default function WorkOrder() {
   return (
     <form
       onSubmit={handleSubmit}
-      className=" relative shadow-md h-[calc(100vh-15rem)] md:mb-0  md:h-full bg-white dark:bg-arc_black"
+      className=" relative shadow-md h-[calc(100vh-17rem)] md:mb-0  md:h-full bg-white dark:bg-arc_black"
     >
       <div className="absolute inset-0 overflow-auto p-6 flex  flex-col gap-2">
         <div className="flex flex-col md:flex-row gap-3 md:w-[900px] ">

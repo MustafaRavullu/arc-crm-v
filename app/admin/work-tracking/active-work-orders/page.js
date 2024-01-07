@@ -6,7 +6,12 @@ import TrackingPanel from "@/components/TrackingPanel";
 import WorkOrderDetails from "@/components/WorkOrderDetails";
 import WorkOrderList from "@/components/WorkOrderList";
 import { useWorkTrackingContext } from "@/contexts/workTrackingContext";
-import { TagIcon, SwatchIcon, Battery0Icon } from "@heroicons/react/24/outline";
+import {
+  TagIcon,
+  SwatchIcon,
+  Battery0Icon,
+  ArrowPathIcon,
+} from "@heroicons/react/24/outline";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
@@ -56,7 +61,7 @@ export default function ActiveWorkOrders() {
     // };
   }, [refetch]);
   const completeWorkOrderModalRef = useRef(null);
-  const { globalLoading } = useWorkTrackingContext();
+  const { globalLoading, setGlobalLoading } = useWorkTrackingContext();
   const completeTheWorkOrder = async () => {
     setLoading(true);
     const querySnapshot = await getDocs(collection(db, "workOrderLists"));
@@ -92,6 +97,29 @@ export default function ActiveWorkOrders() {
     );
     completeWorkOrderModalRef?.current?.close();
     setLoading(false);
+  };
+  const refetchSelectedWorkOrder = async (code) => {
+    // setSelectedWorkOrder(
+    //   data.find((x) => x.workOrderCode === item.workOrderCode)
+    // )
+    setGlobalLoading(true);
+    const q = query(
+      collection(db, "workOrders"),
+      where(
+        "workOrderCode",
+        "==",
+        code.replace(/\s/g, "").toLocaleLowerCase("tr")
+      )
+    );
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      setSelectedWorkOrder({ ...doc.data(), id: doc.id });
+    });
+    toast.success(
+      "Bu iş emri ile alakalı son güncellemeleri aldınız. Şu anda her şey güncel.",
+      { position: "top-center" }
+    );
+    setGlobalLoading(false);
   };
   return (
     <>
@@ -200,6 +228,16 @@ export default function ActiveWorkOrders() {
                   </div>
                 </div>
               </div>
+              <button
+                type="button"
+                className="simple_button w-full flex gap-2 justify-center sm:hidden"
+                onClick={() =>
+                  refetchSelectedWorkOrder(selectedWorkOrder.workOrderCode)
+                }
+              >
+                Son Güncellemeleri Al
+                <ArrowPathIcon className="w-5" />
+              </button>
               <div className="flex-[3] bg-white shadow-md rounded-lg dark:bg-arc_black">
                 <TrackingPanel />
               </div>
