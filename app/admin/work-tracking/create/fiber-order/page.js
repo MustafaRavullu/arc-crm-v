@@ -71,6 +71,10 @@ export default function FiberOrder() {
       stories: [],
     });
     setImage(null);
+    toast.success("İş emri başarıyla oluşturuldu.", {
+      position: "top-center",
+    });
+    setLoading(false);
   };
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -133,10 +137,6 @@ export default function FiberOrder() {
       } catch (error) {
         console.log(error);
       }
-      toast.success("İş emri başarıyla oluşturuldu.", {
-        position: "top-center",
-      });
-      setLoading(false);
     } else {
       const docRef = doc(db, "workOrderLists", `${workOrderLists.length + 1}`);
       try {
@@ -157,10 +157,6 @@ export default function FiberOrder() {
       } catch (error) {
         console.log(error);
       }
-      toast.success("İş emri başarıyla oluşturuldu.", {
-        position: "top-center",
-      });
-      setLoading(false);
     }
   };
   const [formData, setFormData] = useState({
