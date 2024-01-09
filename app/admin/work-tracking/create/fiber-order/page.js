@@ -102,7 +102,7 @@ export default function FiberOrder() {
         return getDownloadURL(snapshot.ref);
       })
       .then((url) => {
-        createWorkOrder(url);
+        return createWorkOrder(url);
       });
     const workOrderListQuerySnapshot = await getDocs(
       collection(db, "workOrderLists")

@@ -134,7 +134,7 @@ export default function WorkOrder() {
         return getDownloadURL(snapshot.ref);
       })
       .then((url) => {
-        createWorkOrder(url);
+        return createWorkOrder(url);
       });
     // iş emirlerinin filtre özelliklerini depoladığımız kısım
     const workOrderListQuerySnapshot = await getDocs(
