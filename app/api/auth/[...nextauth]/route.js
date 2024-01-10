@@ -61,14 +61,14 @@ export const authOptions = {
           // doc.data() is never undefined for query doc snapshots
           isUserExist = { ...doc.data(), id: doc.id };
         });
-        if (isUserExist.loggedIn === true) {
-          return null;
-        }
+        // if (isUserExist.loggedIn === true) {
+        //   return null;
+        // }
 
         if (isUserExist && isUserExist.password === credentials.password) {
-          await updateDoc(doc(db, "users", isUserExist.id), {
-            loggedIn: true,
-          });
+          // await updateDoc(doc(db, "users", isUserExist.id), {
+          //   loggedIn: true,
+          // });
           return isUserExist;
         } else {
           return null;
