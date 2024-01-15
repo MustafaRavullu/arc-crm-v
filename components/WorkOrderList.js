@@ -2,10 +2,11 @@
 
 import { useWorkTrackingContext } from "@/contexts/workTrackingContext";
 import { db } from "@/firebase.config";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon, PrinterIcon } from "@heroicons/react/24/outline";
 import { collection, query, where, getDoc, getDocs } from "firebase/firestore";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import PrintModal from "./PrintModal";
 
 export default function WorkOrderList({ data }) {
   const pathname = usePathname();
@@ -68,83 +69,97 @@ export default function WorkOrderList({ data }) {
     setGlobalLoading(false);
   };
   const { setGlobalLoading } = useWorkTrackingContext();
+  const printRef = useRef(null);
   return (
-    <div className="min-h-[400px] md:min-h-full flex flex-col gap-6 p-6">
-      {/* Başlık */}
-      <div className="font-bold text-lg">
-        {pathname.includes("active-work-orders")
-          ? "AKTİF İŞ EMİRLERİ"
-          : pathname.includes("completed-work-orders")
-          ? "TAMAMLANMIŞ İŞ EMİRLERİ"
-          : ""}
-      </div>
-      {/* Arama Kutusu */}
-      <div className="flex items-center border-b border-arc_black dark:border-white">
-        <div className="pl-3">
-          <MagnifyingGlassIcon className="w-5" />
+    <>
+      <div className="min-h-[400px] md:min-h-full flex flex-col gap-6 p-6">
+        {/* Başlık */}
+        <div className="font-bold text-lg flex justify-between">
+          {pathname.includes("active-work-orders")
+            ? "AKTİF İŞ EMİRLERİ"
+            : pathname.includes("completed-work-orders")
+            ? "TAMAMLANMIŞ İŞ EMİRLERİ"
+            : ""}
+          {selectedWorkOrder && selectedWorkOrder.productType === "ürün" ? (
+            <button
+              type="button"
+              onClick={() => printRef?.current?.showModal()}
+              className="underline hidden md:flex gap-1 items-center"
+            >
+              Yazdır
+              <PrinterIcon className="w-5" />
+            </button>
+          ) : null}
         </div>
-        <input
-          type="text"
-          placeholder="Ara"
-          value={searchQuery}
-          onChange={(event) => setSearchQuery(event.target.value)}
-          className="bg-white text-base outline-none p-3 w-full dark:bg-arc_black"
-        />
-      </div>
-      {/* Filtreler */}
-      <div className="flex gap-3">
-        {productTypeFilters.map((item) => (
-          <button
-            type="button"
-            key={item.id}
-            onClick={() =>
-              setFilterParams({ ...filterParams, productType: item.value })
-            }
-            className={`border grow font-semibold border-arc_black p-2 rounded-lg dark:border-white ${
-              filterParams.productType === item.value &&
-              "bg-arc_black text-white dark:bg-white dark:text-black"
-            }`}
-          >
-            {item.label}
-          </button>
-        ))}
-        {jobTypeFilters.map((item) => (
-          <button
-            type="button"
-            key={item.id}
-            onClick={() =>
-              setFilterParams({ ...filterParams, jobType: item.value })
-            }
-            className={`border grow font-semibold border-arc_black p-2 rounded-lg dark:border-white ${
-              filterParams.jobType === item.value &&
-              "bg-arc_black text-white dark:bg-white dark:text-black"
-            }`}
-          >
-            {item.label}
-          </button>
-        ))}
-      </div>
-      {/* İş Emir Kodları */}
-      <div className="flex-1 relative">
-        <div className="absolute inset-0 overflow-auto flex flex-col gap-3">
-          {thirdFilter.length > 0
-            ? thirdFilter.map((item, index) => (
-                <button
-                  key={index}
-                  onClick={() => handleSelectWorkOrder(item.workOrderCode)}
-                  className={`p-3 rounded-lg font-bold text-base ${
-                    selectedWorkOrder &&
-                    item.workOrderCode === selectedWorkOrder.workOrderCode
-                      ? "bg-arc_black text-white dark:bg-white dark:text-black"
-                      : "hover:bg-arc_black hover:text-white dark:hover:bg-white dark:hover:text-black"
-                  }`}
-                >
-                  {item.workOrderCode}
-                </button>
-              ))
-            : "Aradığınız kriterlere uygun ürün yok"}
+        {/* Arama Kutusu */}
+        <div className="flex items-center border-b border-arc_black dark:border-white">
+          <div className="pl-3">
+            <MagnifyingGlassIcon className="w-5" />
+          </div>
+          <input
+            type="text"
+            placeholder="Ara"
+            value={searchQuery}
+            onChange={(event) => setSearchQuery(event.target.value)}
+            className="bg-white text-base outline-none p-3 w-full dark:bg-arc_black"
+          />
+        </div>
+        {/* Filtreler */}
+        <div className="flex gap-3">
+          {productTypeFilters.map((item) => (
+            <button
+              type="button"
+              key={item.id}
+              onClick={() =>
+                setFilterParams({ ...filterParams, productType: item.value })
+              }
+              className={`border grow font-semibold border-arc_black p-2 rounded-lg dark:border-white ${
+                filterParams.productType === item.value &&
+                "bg-arc_black text-white dark:bg-white dark:text-black"
+              }`}
+            >
+              {item.label}
+            </button>
+          ))}
+          {jobTypeFilters.map((item) => (
+            <button
+              type="button"
+              key={item.id}
+              onClick={() =>
+                setFilterParams({ ...filterParams, jobType: item.value })
+              }
+              className={`border grow font-semibold border-arc_black p-2 rounded-lg dark:border-white ${
+                filterParams.jobType === item.value &&
+                "bg-arc_black text-white dark:bg-white dark:text-black"
+              }`}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+        {/* İş Emir Kodları */}
+        <div className="flex-1 relative">
+          <div className="absolute inset-0 overflow-auto flex flex-col gap-3">
+            {thirdFilter.length > 0
+              ? thirdFilter.map((item, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleSelectWorkOrder(item.workOrderCode)}
+                    className={`p-3 rounded-lg font-bold text-base ${
+                      selectedWorkOrder &&
+                      item.workOrderCode === selectedWorkOrder.workOrderCode
+                        ? "bg-arc_black text-white dark:bg-white dark:text-black"
+                        : "hover:bg-arc_black hover:text-white dark:hover:bg-white dark:hover:text-black"
+                    }`}
+                  >
+                    {item.workOrderCode}
+                  </button>
+                ))
+              : "Aradığınız kriterlere uygun ürün yok"}
+          </div>
         </div>
       </div>
-    </div>
+      <PrintModal ref={printRef} />
+    </>
   );
 }
