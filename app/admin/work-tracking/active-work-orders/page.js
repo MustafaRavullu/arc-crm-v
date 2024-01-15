@@ -11,6 +11,7 @@ import {
   SwatchIcon,
   Battery0Icon,
   ArrowPathIcon,
+  PrinterIcon,
 } from "@heroicons/react/24/outline";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
@@ -28,6 +29,7 @@ import {
 import { db } from "@/firebase.config";
 import { HashLoader } from "react-spinners";
 import { toast } from "sonner";
+import PrintModal from "@/components/PrintModal";
 
 export default function ActiveWorkOrders() {
   const { data: session } = useSession();
@@ -121,14 +123,27 @@ export default function ActiveWorkOrders() {
     );
     setGlobalLoading(false);
   };
+  const printRef = useRef(null);
+
   return (
     <>
+      <PrintModal ref={printRef} />
       <div className="flex-1 flex flex-col md:flex-row gap-6">
         <div className="flex-1 bg-white shadow-md rounded-lg dark:bg-arc_black">
           <WorkOrderList
             data={workOrders.filter((item) => item.active === true)}
           />
         </div>
+        {selectedWorkOrder && selectedWorkOrder.productType === "ürün" ? (
+          <button
+            type="button"
+            onClick={() => printRef?.current?.showModal()}
+            className="simple_button w-full justify-center md:hidden flex gap-1 items-center"
+          >
+            Yazdır
+            <PrinterIcon className="w-5" />
+          </button>
+        ) : null}
         {selectedWorkOrder ? (
           <div className="flex-[4] flex flex-col md:flex-row gap-6 relative">
             {globalLoading && (
