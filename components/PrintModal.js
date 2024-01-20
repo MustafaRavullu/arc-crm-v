@@ -87,7 +87,7 @@ const PrintModal = forwardRef(function PrintModal({}, ref) {
     content: () => printPageRef?.current,
   });
   return (
-    <dialog ref={ref} className="h-[800px] w-[700px]">
+    <dialog ref={ref} className="h-screen w-full  md:h-[800px] md:w-[700px]">
       <div className="flex h-full flex-col gap-1 p-3">
         {!!selectedWorkOrder && (
           <div ref={printPageRef} className="flex flex-1 flex-col p-3 gap-3">
