@@ -481,6 +481,12 @@ export default function WorkTrackingContextProvider({ children }) {
     ],
     stories: [],
   });
+
+  // Stok Takip Sistemi Context
+  const [activePage, setActivePage] = useState("");
+  const [stockFiberSearch, setStockFiberSearch] = useState("");
+  const [stockProductSearch, setStockProductSearch] = useState("");
+  const [refetchFiberCodes, setRefetchFiberCodes] = useState(0);
   return (
     <WorkTrackingContext.Provider
       value={{
@@ -504,6 +510,14 @@ export default function WorkTrackingContextProvider({ children }) {
         setGlobalLoading,
         formDataForReturnWorkOrder,
         setFormDataForReturnWorkOrder,
+        activePage,
+        setActivePage,
+        stockFiberSearch,
+        setStockFiberSearch,
+        stockProductSearch,
+        setStockProductSearch,
+        refetchFiberCodes,
+        setRefetchFiberCodes,
       }}
     >
       {children}

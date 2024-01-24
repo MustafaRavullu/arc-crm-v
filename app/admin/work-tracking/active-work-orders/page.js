@@ -124,7 +124,6 @@ export default function ActiveWorkOrders() {
     setGlobalLoading(false);
   };
   const printRef = useRef(null);
-
   return (
     <>
       <PrintModal ref={printRef} />

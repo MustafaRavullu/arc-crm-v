@@ -54,6 +54,7 @@ export default function FiberCode() {
               {
                 code: formData.code.replace(/\s/g, "").toLocaleLowerCase("tr"),
                 displayName: formData.code.trim(),
+                amount: 0,
               },
             ],
           },
@@ -76,6 +77,7 @@ export default function FiberCode() {
               {
                 code: formData.code.replace(/\s/g, "").toLocaleLowerCase("tr"),
                 displayName: formData.code.trim(),
+                amount: 0,
               },
             ],
           },

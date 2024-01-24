@@ -134,6 +134,9 @@ function WorkerForm() {
     event.preventDefault();
     setLoading(true);
     if (formData.transactionPoint !== "") {
+      // if (formData.productType === "ürün" && formData.transactionPointType === "Bitmiş Ürün Deposu" && formData.operationType === "Teslim Al") {
+
+      // }
       // setFormData({
       //   ...formData,
       //   subcontractorFollower:
@@ -177,6 +180,37 @@ function WorkerForm() {
           }),
         });
       }
+      if (
+        formData.productType === "ip" &&
+        formData.operationType === "Teslim Al"
+      ) {
+        const fiberDocRef = doc(db, "fiberCodes", "1");
+        const alteredArray = fiberCodes.map((item) => {
+          if (formData.fiberAmount.find((obj) => obj.code === item.code)) {
+            const ObjFromFormData = formData.fiberAmount.find(
+              (obj) => obj.code === item.code
+            );
+            if (ObjFromFormData.unit === "Ton") {
+              return {
+                ...item,
+                amount:
+                  Number(item.amount) - Number(ObjFromFormData.amount) * 1000,
+              };
+            } else {
+              return {
+                ...item,
+                amount: Number(item.amount) - Number(ObjFromFormData.amount),
+              };
+            }
+          } else {
+            return item;
+          }
+        });
+        await updateDoc(fiberDocRef, {
+          arr: alteredArray,
+        });
+      }
+
       setProductTypeSelect({ productType: "" });
       toast.success(
         "İşleminiz başarıyla gerçekleştirildi. Yeni işlem yapmak için hazırsınız.",
@@ -448,6 +482,52 @@ function WorkerForm() {
             toast.error("En az bir alan olmalı. Lütfen alan ekleyin!", {
               position: "top-center",
             });
+          } else if (
+            formData.operationType === "Teslim Al" &&
+            formData.productType === "ip"
+          ) {
+            let isThereExcess = false;
+            for (let i = 0; i < formData.fiberAmount.length; i++) {
+              const fiberCodeFormDb = fiberCodes.find(
+                (item) => item.code === formData.fiberAmount[i].code
+              );
+              if (formData.fiberAmount[i].unit === "Ton") {
+                if (
+                  Number(fiberCodeFormDb.amount) <
+                  Number(formData.fiberAmount[i].amount) * 1000
+                ) {
+                  isThereExcess = true;
+                  toast.error(
+                    `${formData.fiberAmount[i].code} kodlu ipten depoda ${
+                      fiberCodeFormDb.amount
+                    } kg var, ancak siz ${
+                      Number(formData.fiberAmount[i].amount) * 1000
+                    } kg almaya çalışıyorsunuz. Eğer bir hata olduğunu düşünüyorsanız lütfen yetkili ile iletişime geçin.`,
+                    { position: "top-center" }
+                  );
+                  break;
+                }
+              } else {
+                if (
+                  Number(fiberCodeFormDb.amount) <
+                  Number(formData.fiberAmount[i].amount)
+                ) {
+                  isThereExcess = true;
+                  toast.error(
+                    `${formData.fiberAmount[i].code} kodlu ipten depoda ${
+                      fiberCodeFormDb.amount
+                    } kg var, ancak siz ${Number(
+                      formData.fiberAmount[i].amount
+                    )} kg almaya çalışıyorsunuz. Eğer bir hata olduğunu düşünüyorsanız lütfen yetkili ile iletişime geçin.`,
+                    { position: "top-center" }
+                  );
+                  break;
+                }
+              }
+            }
+            if (!isThereExcess) {
+              approvedFiberRef?.current?.showModal();
+            }
           } else {
             approvedFiberRef?.current?.showModal();
           }

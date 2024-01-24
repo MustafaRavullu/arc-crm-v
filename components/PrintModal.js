@@ -112,7 +112,8 @@ const PrintModal = forwardRef(function PrintModal({}, ref) {
                         <span className="text-red-500 font-bold">
                           {item.label}:
                         </span>{" "}
-                        {selectedWorkOrder[item.attr].join(", ")}
+                        {selectedWorkOrder.productType === "ürün" &&
+                          selectedWorkOrder[item.attr].join(", ")}
                       </div>
                     );
                   } else {

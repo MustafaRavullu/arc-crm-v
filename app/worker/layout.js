@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import HeaderLinks from "@/components/HeaderLinks";
+import WorkTrackingContextProvider from "@/contexts/workTrackingContext";
 
 export default function WorkerLayout({ children }) {
   const navLinks = [
@@ -10,11 +11,13 @@ export default function WorkerLayout({ children }) {
     },
   ];
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header>
-        <HeaderLinks links={navLinks} />
-      </Header>
-      {children}
-    </div>
+    <WorkTrackingContextProvider>
+      <div className="min-h-screen flex flex-col">
+        <Header>
+          <HeaderLinks links={navLinks} />
+        </Header>
+        {children}
+      </div>
+    </WorkTrackingContextProvider>
   );
 }
