@@ -131,19 +131,31 @@ const PrintModal = forwardRef(function PrintModal({}, ref) {
                 })}
               </div>
             </div>
-            <span className="font-extrabold underline">HEDEF MİKTAR</span>
-            <div className="flex flex-col gap-1 flex-wrap">
-              {selectedWorkOrder.targetAmount.length !== 0
-                ? selectedWorkOrder.targetAmount.map((item, index) => (
-                    <div key={index} className="flex gap-3">
-                      {item.color} <ArrowRightIcon className="w-5" />{" "}
-                      <span className="text-red-500 font-bold">
-                        {item.amount}
-                      </span>{" "}
-                      adet
-                    </div>
-                  ))
-                : "Belirtilmedi"}
+            <div className="grid grid-cols-2">
+              <div className="flex flex-col gap-2">
+                <span className="font-extrabold underline">HEDEF MİKTAR</span>
+                <div className="flex flex-col gap-1 flex-wrap">
+                  {selectedWorkOrder.targetAmount.length !== 0
+                    ? selectedWorkOrder.targetAmount.map((item, index) => (
+                        <div key={index} className="flex gap-3">
+                          {item.color} <ArrowRightIcon className="w-5" />{" "}
+                          <span className="text-red-500 font-bold">
+                            {item.amount}
+                          </span>{" "}
+                          adet
+                        </div>
+                      ))
+                    : "Belirtilmedi"}
+                </div>
+              </div>
+              <div className="flex flex-col gap-2">
+                <span className="font-extrabold underline">AÇIKLAMA</span>
+                <div>
+                  {selectedWorkOrder.description !== ""
+                    ? selectedWorkOrder.description
+                    : "-"}
+                </div>
+              </div>
             </div>
           </div>
         )}
