@@ -48,7 +48,7 @@ export default function FiberCard({ label, amount, compare, data }) {
           </div>
         </div>
         <div className="flex justify-between items-end">
-          <div className="font-bold text-4xl">{amount}</div>
+          <div className="font-bold text-4xl">{amount.toFixed(2)}</div>
           <div>Kg</div>
         </div>
       </div>
