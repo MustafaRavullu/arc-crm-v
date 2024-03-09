@@ -1,65 +1,54 @@
 "use client";
 
-import ProductCard from "@/components/ProductCard";
-import StockSearch from "@/components/StockSearch";
-import { useWorkTrackingContext } from "@/contexts/workTrackingContext";
+import { useEffect, useState } from "react";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/firebase.config";
-import { collection, getDocs } from "firebase/firestore";
-import React, { useEffect, useState } from "react";
+import ProductStockCard from "@/components/ProductStockCard";
+import { SparklesIcon } from "@heroicons/react/24/solid";
 
 export default function Product() {
-  const ready = false;
-  const { stockProductSearch, setStockProductSearch } =
-    useWorkTrackingContext();
-  const [data, setData] = useState([]);
-  const dummyInfo = [
-    {
-      workOrderCode: 1234,
-      amount: 1000,
-    },
-  ];
-
+  const [activeOrders, setActiveOrders] = useState([]);
   useEffect(() => {
-    const getFiberCodes = async () => {
-      const querySnapshot = await getDocs(collection(db, "workOrderLists"));
-      const fiberCodeDocs = [];
+    const getWorkOrders = async () => {
+      let orders = [];
+      const q = query(
+        collection(db, "workOrders"),
+        where("active", "==", true),
+        where("productType", "==", "ürün")
+      );
+      const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
-        fiberCodeDocs.push({ ...doc.data(), id: doc.id });
+        orders.push({ ...doc.data(), id: doc.id });
       });
-      const mergedArray = fiberCodeDocs.flatMap((obj) => obj.arr);
-      setData(mergedArray);
+      setActiveOrders(orders);
     };
-    getFiberCodes();
+    getWorkOrders();
   }, []);
-  const filteredData = data.filter((item) =>
-    item.workOrderCode.includes(
-      stockProductSearch.toLocaleLowerCase("tr").replace(/\s+/g, "")
+  const isAvailableInStock = activeOrders.some((item) =>
+    item.stories.some(
+      (element) => element.transactionPointType === "Bitmiş Ürün Deposu"
     )
   );
   return (
-    <>
-      {ready && (
-        <StockSearch
-          query={stockProductSearch}
-          setQuery={setStockProductSearch}
-        />
-      )}
-      <section className="flex-1 relative">
-        <div className="absolute inset-0 overflow-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6 auto-rows-min">
-          {ready &&
-            filteredData.map((item, index) => (
-              <ProductCard
-                key={index}
-                label={item.workOrderCode}
-                amount={item.amount}
+    <main className=" flex-1 flex flex-col gap-6">
+      <section className="flex-1  relative">
+        <div className="absolute inset-0 overflow-auto grid grid-cols-1 auto-rows-min md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+          {isAvailableInStock ? (
+            activeOrders.map((item) => (
+              <ProductStockCard
+                key={item.id}
+                workOrder={item.workOrderCode}
+                stories={item.stories}
               />
-            ))}
-          <div className="text-center text-blue-500 dark:text-green-500">
-            Yakında kullanıma açılacak!
-          </div>
+            ))
+          ) : (
+            <div className="absolute inset-0 flex justify-center items-center font-bold text-xl gap-5">
+              <SparklesIcon className="w-10" />
+              Depoda şu an ürün yok.
+            </div>
+          )}
         </div>
       </section>
-    </>
+    </main>
   );
 }
