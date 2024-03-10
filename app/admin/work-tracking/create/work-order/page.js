@@ -31,7 +31,7 @@ export default function WorkOrder() {
   const createWorkOrder = async (url) => {
     try {
       await setDoc(doc(db, "workOrders", uuidv4()), {
-        workOrderCode: formData.workOrderCode,
+        workOrderCode: formData.workOrderCode.toLocaleLowerCase("tr-TR"),
         productType: formData.productType,
         customer: formData.customer,
         image: url,
