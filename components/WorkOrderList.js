@@ -56,11 +56,7 @@ export default function WorkOrderList({ data }) {
     setGlobalLoading(true);
     const q = query(
       collection(db, "workOrders"),
-      where(
-        "workOrderCode",
-        "==",
-        code.replace(/\s/g, "").toLocaleLowerCase("tr")
-      )
+      where("workOrderCode", "==", code)
     );
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {

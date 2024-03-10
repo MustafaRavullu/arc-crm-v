@@ -128,11 +128,7 @@ const JustSelect = ({
     setLoading(true);
     const q = query(
       collection(db, "workOrders"),
-      where(
-        "workOrderCode",
-        "==",
-        item.workOrderCode.toLocaleLowerCase("tr-TR")
-      )
+      where("workOrderCode", "==", item.workOrderCode)
     );
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {
