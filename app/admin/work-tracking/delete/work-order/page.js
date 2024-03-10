@@ -37,11 +37,7 @@ export default function WorkOrder() {
       x.push({ ...doc.data(), id: doc.id });
     });
     const searchedDoc = x.find((item) =>
-      item.arr.find(
-        (item) =>
-          item.workOrderCode ===
-          formData.workOrderCode.toLocaleLowerCase("tr-TR")
-      )
+      item.arr.find((item) => item.workOrderCode === formData.workOrderCode)
     );
     const updatedArr = searchedDoc.arr.filter(
       (item) => item.workOrderCode !== formData.workOrderCode
@@ -132,11 +128,7 @@ const JustSelect = ({
     setLoading(true);
     const q = query(
       collection(db, "workOrders"),
-      where(
-        "workOrderCode",
-        "==",
-        item.workOrderCode.toLocaleLowerCase("tr-TR")
-      )
+      where("workOrderCode", "==", item.workOrderCode)
     );
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => {

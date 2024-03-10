@@ -113,11 +113,7 @@ export default function WorkOrder() {
     setLoading(true);
     const q = query(
       collection(db, "workOrders"),
-      where(
-        "workOrderCode",
-        "==",
-        formData.workOrderCode.replace(/\s/g, "").toLocaleLowerCase("tr")
-      )
+      where("workOrderCode", "==", formData.workOrderCode)
     );
     let isWorkOrderExists;
     const querySnapshot = await getDocs(q);
