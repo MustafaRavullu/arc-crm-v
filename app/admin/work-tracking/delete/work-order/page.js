@@ -37,7 +37,11 @@ export default function WorkOrder() {
       x.push({ ...doc.data(), id: doc.id });
     });
     const searchedDoc = x.find((item) =>
-      item.arr.find((item) => item.workOrderCode === formData.workOrderCode)
+      item.arr.find(
+        (item) =>
+          item.workOrderCode ===
+          formData.workOrderCode.toLocaleLowerCase("tr-TR")
+      )
     );
     const updatedArr = searchedDoc.arr.filter(
       (item) => item.workOrderCode !== formData.workOrderCode
