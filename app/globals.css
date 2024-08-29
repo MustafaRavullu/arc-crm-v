@@ -7,3 +7,9 @@
     @apply bg-arc_black h-fit w-fit whitespace-nowrap text-white font-semibold rounded-lg py-2.5 px-5 disabled:opacity-50 dark:bg-white dark:text-black;
   }
 }
+
+@layer base {
+  img {
+    display: initial;
+  }
+}

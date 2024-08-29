@@ -49,13 +49,13 @@ const StockFiberSubtractModal = forwardRef(function StockFiberSubtractModal(
   return (
     <dialog
       ref={ref}
-      className="h-fit w-full md:w-[400px] rounded-lg border border-black dark:border-white"
+      className="h-[270px] md:h-fit w-full md:w-[400px] rounded-lg border border-black dark:border-white"
     >
       <div className="flex h-full flex-col gap-3 p-3">
         <div className="font-bold text-xl text-center">İplik Çıkartma</div>
         <div className="font-bold text-lg">{label}</div>
 
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-1 flex-1">
           <label htmlFor="amount">Miktar</label>
           <div className="flex gap-3 w-full items-end">
             <input

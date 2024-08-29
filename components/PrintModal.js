@@ -86,11 +86,23 @@ const PrintModal = forwardRef(function PrintModal({}, ref) {
   const handlePrint = useReactToPrint({
     content: () => printPageRef?.current,
   });
+  const handlePDFDownload = async () => {
+    const html2pdf = await require("html2pdf.js");
+    const element = document.getElementById("workOrderForPrintAndPdf");
+    html2pdf(element);
+  };
   return (
-    <dialog ref={ref} className="h-screen w-full  md:h-[800px] md:w-[700px]">
+    <dialog
+      ref={ref}
+      className="h-screen w-full  md:h-[800px] md:w-[700px] border "
+    >
       <div className="flex h-full flex-col gap-1 p-3">
         {!!selectedWorkOrder && (
-          <div ref={printPageRef} className="flex flex-1 flex-col p-3 gap-3">
+          <div
+            ref={printPageRef}
+            id="workOrderForPrintAndPdf"
+            className="flex flex-1 flex-col p-3 gap-3 bg-white text-black"
+          >
             <div className=" flex gap-3">
               {selectedWorkOrder?.image ? (
                 <div className="w-1/2 aspect-auto relative">
@@ -159,16 +171,28 @@ const PrintModal = forwardRef(function PrintModal({}, ref) {
             </div>
           </div>
         )}
-        <div className="flex justify-between">
+        <div className="flex justify-between flex-col gap-4 md:gap-0 md:flex-row">
+          <div className="flex flex-col gap-4 md:flex-row">
+            <button
+              className="simple_button w-full md:w-fit"
+              onClick={handlePDFDownload}
+            >
+              PDF İndir
+            </button>
+            <button
+              type="button"
+              onClick={handlePrint}
+              className="simple_button w-full md:w-fit"
+            >
+              Yazdır
+            </button>
+          </div>
           <button
             type="button"
             className="py-2 px-4 border rounded-lg"
             onClick={() => ref?.current?.close()}
           >
             Vazgeç
-          </button>
-          <button type="button" onClick={handlePrint} className="simple_button">
-            Yazdır
           </button>
         </div>
       </div>
